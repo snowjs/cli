@@ -1,16 +1,16 @@
-# snow
+![alt text](./logo.svg)
 
 > **S**elf-hosted **now** deployments
 
 Enjoy effortless deployments with a clone* of [now](https://github.com/zeit/now-cli) on your own hardware.
 
-## Getting started
+### Getting started
 
 - Deploy the [snow server]().
 - `npm i -g snow-cli`
 - `snow`
 
-## *Supported commands
+### *Supported commands
 
 Without arguments, deploys just like `now`.
 
@@ -26,7 +26,7 @@ Without arguments, deploys just like `now`.
 | :x:     | `ls`                   | List deployments  |
 | :x:     | `rm [name]`            | Remove deployment |
 
-## Flags
+### Flags
 
 | Support | Command | Flag            | Description          |
 |---------|---------|-----------------|----------------------|
