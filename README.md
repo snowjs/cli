@@ -1,4 +1,6 @@
-![alt text](./logo.svg)
+<div align="center">
+  <img height="300" src="./logo.svg">
+</div>
 
 > **S**elf-hosted **now** deployments
 
