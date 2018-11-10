@@ -9,7 +9,7 @@ Enjoy effortless deployments with a clone of [now](https://github.com/zeit/now-c
 ### Getting started
 
 ```
-curl -sSL https://git.io/fpL96 | sh
+curl -sSL https://snowjs.app/ | sh
 npm i -g snow-cli
 snow
 ```
