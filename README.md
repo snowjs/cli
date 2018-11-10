@@ -2,22 +2,25 @@
   <img height="300" src="./logo.svg">
 </div>
 
-> **S**elf-hosted **now** deployments
+> :snowflake: **S**elf-hosted **now** deployments 
 
-Enjoy effortless deployments with a clone* of [now](https://github.com/zeit/now-cli) on your own hardware.
+Enjoy effortless deployments with a clone of [now](https://github.com/zeit/now-cli) on your own hardware.
 
 ### Getting started
 
-- Deploy the [snow server]().
-- `npm i -g snow-cli`
-- `snow`
+```
+curl -sSL https://git.io/fpL96 | sh
+npm i -g snow-cli
+snow
+```
 
-### *Supported commands
+### Supported commands
 
 Without arguments, deploys just like `now`.
 
 | Support | Command                | Description       |
 |---------|------------------------|-------------------|
+| :x:     | \<none\>               | Deploy            |
 | :x:     | `alias`                | Alias deployment  |
 | :x:     | `deploy`               | Deploy            |
 | :x:     | `domains`              | List domains      |
@@ -27,10 +30,9 @@ Without arguments, deploys just like `now`.
 | :x:     | `logout`               | Logout            |
 | :x:     | `ls`                   | List deployments  |
 | :x:     | `rm [name]`            | Remove deployment |
-
 ### Flags
 
-| Support | Command | Flag            | Description          |
-|---------|---------|-----------------|----------------------|
-| :x:     | all     | --token [token] | Authentication token |
-| :x:     | login   | --host [host]   | Snow server hostname |
+| Support | Command | Flag              | Description          |
+|---------|---------|-------------------|----------------------|
+| :x:     | \<all\> | `--token [token]` | Authentication token |
+| :x:     | `login` | `--host [host]`   | Snow server hostname |
