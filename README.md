@@ -18,21 +18,18 @@ snow
 
 Without arguments, deploys just like `now`.
 
-| Support | Command                | Description       |
-|---------|------------------------|-------------------|
-| :x:     | \<none\>               | Deploy            |
-| :x:     | `alias`                | Alias deployment  |
-| :x:     | `deploy`               | Deploy            |
-| :x:     | `domains`              | List domains      |
-| :x:     | `domains add [domain]` | Add domain        |
-| :x:     | `domains rm [domain]`  | Remove domain     |
-| :x:     | `login`                | Login             |
-| :x:     | `logout`               | Logout            |
-| :x:     | `ls`                   | List deployments  |
-| :x:     | `rm [name]`            | Remove deployment |
-### Flags
-
-| Support | Command | Flag              | Description          |
-|---------|---------|-------------------|----------------------|
-| :x:     | \<all\> | `--token [token]` | Authentication token |
-| :x:     | `login` | `--host [host]`   | Snow server hostname |
+| Support            | Command                     | Description       |
+|--------------------|-----------------------------|-------------------|
+| :x:                | \<none\>                    | Create deployment |
+| :x:                | `alias`                     | Alias deployment  |
+| :x:                | `deploy`                    | Deploy            |
+| :x:                | `domains`                   | List domains      |
+| :x:                | `domains add [domain]`      | Add domain        |
+| :x:                | `domains rm [domain]`       | Remove domain     |
+| :x:                | `login`                     | Login             |
+| :x:                | `logout`                    | Logout            |
+| :white_check_mark: | `ls`                        | List deployments  |
+| :x:                | `rm [name]`                 | Remove deployment |
+| :white_check_mark: | `secrets ls`                | List secrets      |
+| :white_check_mark: | `secrets add [key] [value]` | Create secret     |
+| :white_check_mark: | `secrets rm [key]`          | Remove secret     |
