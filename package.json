@@ -2,9 +2,16 @@
   "name": "@snowjs/cli",
   "version": "0.0.0",
   "description": "Self-hosted now deployments",
-  "main": "index.js",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "scripts": {
+    "lint": "xo",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "snow": "src/index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +22,15 @@
   "bugs": {
     "url": "https://github.com/snowjs/cli/issues"
   },
-  "homepage": "https://github.com/snowjs/cli#readme"
+  "homepage": "https://github.com/snowjs/cli#readme",
+  "dependencies": {
+    "chalk": "2.4.1",
+    "mri": "1.1.1"
+  },
+  "devDependencies": {
+    "xo": "0.23.0"
+  },
+  "xo": {
+    "space": true
+  }
 }
