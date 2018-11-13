@@ -10,13 +10,11 @@ Enjoy effortless deployments with a clone of [now](https://github.com/zeit/now-c
 
 ```
 curl -sSL https://get.snowjs.app/ | sh
-npm i -g snow-cli
+npm i -g @snowjs/cli
 snow
 ```
 
 ### Supported commands
-
-Without arguments, deploys just like `now`.
 
 | Support            | Command                     | Description       |
 |--------------------|-----------------------------|-------------------|
@@ -29,7 +27,7 @@ Without arguments, deploys just like `now`.
 | :x:                | `login`                     | Login             |
 | :x:                | `logout`                    | Logout            |
 | :white_check_mark: | `ls`                        | List deployments  |
-| :x:                | `rm [name]`                 | Remove deployment |
+| :white_check_mark: | `rm [name]`                 | Remove deployment |
 | :white_check_mark: | `secrets ls`                | List secrets      |
 | :white_check_mark: | `secrets add [key] [value]` | Create secret     |
 | :white_check_mark: | `secrets rm [key]`          | Remove secret     |

@@ -22,13 +22,17 @@ function isRemove(str) {
 
 async function main() {
   const {_} = mri(process.argv.slice(2));
-  const [subcommand, ...rest] = _;
+  const [command, ...rest] = _;
 
-  if (subcommand === 'ls') {
+  if (command === 'ls') {
     const [deployment] = rest;
     await run(`kubectl get deployments ${deployment}`);
   }
-  if (subcommand === 'secrets') {
+  if (isRemove(command)) {
+    const [deployment] = rest;
+    await run(`kubectl delete deploy ${deployment}`);
+  }
+  if (command === 'secrets') {
     const [action, key, value] = rest;
     if (action === 'ls') {
       await run('kubectl get secrets');
