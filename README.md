@@ -4,13 +4,26 @@
 
 > :snowflake: **S**elf-hosted **now** deployments 
 
-Enjoy effortless deployments with a clone of [now](https://github.com/zeit/now-cli) on your own hardware.
+Enjoy effortless deployments with a clone of [now][now] on a cloud of your choosing.
+
+### This is Magic 🔮
+
+No, it isn't. This CLI abstracts away the complexities of using [Kubernetes][kubernetes] to replicate the functionality provided by `now`.
 
 ### Getting started
 
 ```
-curl -sSL https://get.snowjs.app/ | sh
 npm i -g @snowjs/cli
+
+# Install CLI tools
+snow install
+
+# Create your kubernetes cluster (GCP)
+snow create
+
+# Create a DNS 'A' record (e.g., myapp.com A 1.2.3.4)
+
+# Deploy your app 
 snow
 ```
 
@@ -31,3 +44,28 @@ snow
 | :white_check_mark: | `secrets ls`                | List secrets      |
 | :white_check_mark: | `secrets add [key] [value]` | Create secret     |
 | :white_check_mark: | `secrets rm [key]`          | Remove secret     |
+
+### Tell me more
+
+Under the hood, `snow`'s simple CLI is served by a Kubernetes cluster. When you create your cluster via `snow`, we install [tiller][helm], which is used to install [traefik] as an [ingress object][ingress], which (1) automanages the SSL certificate lifecycle and (2) maps aliases to deployments. SSL terminiation occurs prior to requests reaching deployments.
+
+When you create a deployment, your project must have `Dockerfile` and `now.json` files. An image is created from the Dockerfile, pushed to a Docker registry, and deployed to Kubernetes. Aliases from `now.json` will point to the deployment. If necessary, new SSL certificates will be created.
+
+For your domain name to be resolvable by Kubernetes, you must create a DNS `A` record, which points to the IP Address of your [traefik] ingress.
+
+The following CLI tools (installable via `snow install`) are necessary to orchestrate the entire end-to-end process, from Kubernetes cluster creation to managing your deployments:
+
+- `virtualbox` (for creating docker images)
+- `docker` (for running local registry)
+- `helm` (for installing [tiller][helm] and [traefik] on your cluster)
+- `kubectl` (for managing deployments, secrets)
+- one of [`minikube`, `gcloud`]
+
+[now]: https://github.com/zeit/now-cli
+[ingress]: https://kubernetes.io/docs/concepts/services-networking/ingress/
+[kubernetes]: https://kubernetes.io/
+[helm]: https://docs.helm.sh/
+[docker]: https://www.docker.com/
+[letsencrypt]: https://letsencrypt.org/
+[minikube]: https://kubernetes.io/docs/setup/minikube/
+[traefik]: https://traefik.io/
