@@ -1,0 +1,9 @@
+{
+  "name": "my-example",
+  "files": [
+    "index.html"
+  ],
+  "alias": [
+    "my-example.minikube"
+  ]
+}

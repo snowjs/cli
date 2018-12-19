@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko
+spec:
+  initContainers:
+    - name: kaniko-init
+      image: alpine
+      args:
+        - "sh"
+        - "-c"
+        - "while true; do sleep 1; if [ -f /tmp/complete ]; then break; fi done"
+      volumeMounts:
+        - name: empty-folder
+          mountPath: /kaniko/build-context
+        - name: empty-folder
+          mountPath: /kaniko/.docker
+  containers:
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:latest
+      args:
+        - "--context=dir:///kaniko/build-context"
+        - "--destination=172.17.0.15:5000/foobar:latest"
+        - "--insecure"
+      volumeMounts:
+        - name: empty-folder
+          mountPath: /kaniko/build-context
+        - name: empty-folder
+          mountPath: /kaniko/.docker
+  volumes:
+    - name: empty-folder
+      emptyDir: {}
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: kaniko
+# spec:
+#   initContainers:
+#     - name: kaniko-init
+#       image: alpine
+#       args:
+#         - "sh"
+#         - "-c"
+#         - "while true; do sleep 1; if [ -f /tmp/complete ]; then break; fi done"
+#       volumeMounts:
+#         - name: build-context
+#           mountPath: /kaniko/build-context
+#   containers:
+#     - name: kaniko
+#       image: gcr.io/kaniko-project/executor:latest
+#       args:
+#         - "--dockerfile=Dockerfile"
+#         - "--context=dir:///kaniko/build-context"
+#         - "--destination=172.17.0.15:5000/foobar:latest"
+#         - "--insecure"
+#         # - "--skip-tls-verify"
+#         # - "--tarPath=dir://kaniko/foo.tar"
+#         # - "--no-push"
+#         # - "--destination=mytag:latest"
+#       volumeMounts:
+#         - name: build-context
+#           mountPath: /kaniko/build-context
+#         - name: docker-config
+#           mountPath: /kaniko/.docker
+#   volumes:
+#     - name: docker-config
+#       configMap:
+#         name: docker-config
+#     - name: build-context
+#       emptyDir: {}

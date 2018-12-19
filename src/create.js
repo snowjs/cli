@@ -1,6 +1,6 @@
 const path = require('path');
 const chalk = require('chalk');
-const {exec, pickOne, run} = require('./utils');
+const {confirm, exec, pickOne, run} = require('./utils');
 
 module.exports = async function () {
   const cloudProviders = ['minikube', 'gcp'];
@@ -18,12 +18,16 @@ module.exports = async function () {
       await run('minikube addons enable ingress');
       await run('helm init --wait');
 
-      // Install traefik and kaniko
+      // Install traefik
       await run('helm install stable/traefik --name traefik --namespace kube-system --set serviceType=NodePort,dashboard.enabled=true,dashboard.domain=traefik-ui.minikube');
-      // Put an example deployment on the server
-      // await run('kubectl run whoami --image=emilevauge/whoami --port=80 --replicas=5 --expose');
-      // await run('kubectl apply -f whoami-ingress.yml');
-      // await run(`kubectl apply -f ${path.resolve(__dirname, '../config/kaniko.yaml')}`);
+
+      if (await confirm('Install an example app on Minikube')) {
+        const deployFile = path.resolve(__dirname, '../config/deployment-minikube.yaml');
+        await run(`kubectl apply -f ${deployFile}`);
+        const {stdout: minikubeIP} = await exec('minikube ip');
+        console.log(`Add "${minikubeIP.trim()} whoami.minikube" to your hosts file to access example app.`);
+      }
+
       break;
     }
     case 'gcp': {
