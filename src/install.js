@@ -1,4 +1,4 @@
-const {confirm, exec, run} = require('./utils');
+const {confirm, run} = require('./utils');
 
 module.exports = async function () {
   const dependencies = [{
@@ -42,7 +42,7 @@ module.exports = async function () {
 
   for (const {label, detectCmd, detectAdvanced, installCmd} of dependencies) {
     try {
-      const {stdout} = await exec(detectCmd);
+      const {stdout} = await run(detectCmd);
       if (detectAdvanced && detectAdvanced(stdout)) {
         tryInstall(label, installCmd);
       }
