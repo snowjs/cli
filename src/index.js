@@ -8,6 +8,7 @@ const login = require('./login');
 const logout = require('./logout');
 const ls = require('./ls');
 const remove = require('./remove');
+const scale = require('./scale');
 const secrets = require('./secrets');
 const {isRemove, logError} = require('./utils');
 
@@ -41,6 +42,10 @@ async function main() {
     }
     case isRemove(command): {
       await remove(rest);
+      break;
+    }
+    case 'scale': {
+      await scale(rest);
       break;
     }
     case 'secrets': {

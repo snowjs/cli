@@ -6,6 +6,11 @@
 
 Enjoy effortless deployments with a clone of [now][now] on a cloud of your choosing.
 
+### Features
+ - ⚡️ Deploy docker images via `snow` (or `snow deploy`)
+ - 🔒 Auto-configured SSL
+ - 🔃 Auto-scaling
+
 ### This is Magic 🔮
 
 No, it isn't. This CLI abstracts away the complexities of using [Kubernetes], [Traefik], [Kaniko], and a private [Docker Registry] together, replicating the functionality provided by `now`.
@@ -41,6 +46,8 @@ snow
 | :white_check_mark: | `logout`                    | Logout            |
 | :white_check_mark: | `ls`                        | List deployments  |
 | :white_check_mark: | `rm [name]`                 | Remove deployment |
+| :white_check_mark: | `scale [name] [min]`        | Scale deployment  |
+| :white_check_mark: | `scale [name] [min] [max]`  | Scale deployment  |
 | :white_check_mark: | `secrets ls`                | List secrets      |
 | :white_check_mark: | `secrets add [key] [value]` | Create secret     |
 | :white_check_mark: | `secrets rm [key]`          | Remove secret     |
