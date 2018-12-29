@@ -29,11 +29,23 @@ function isRemove(str) {
   return str === 'rm' || str === 'remove';
 }
 
+function logDebug(message) {
+  console.log(chalk.gray(message));
+}
+
+function logError(message) {
+  console.log(chalk.bold.red(message));
+}
+
+function logInfo(message) {
+  console.log(chalk.bold.white(message));
+}
+
 function pickOne(msg, options) {
-  const prefixes = options.map(option => option.charAt(0));
   const question = chalk.bold.red(`> ${msg}?`);
-  const optsStr = chalk.gray(`[${prefixes.join(',')}]`);
-  process.stdout.write(`${question} ${optsStr} `);
+  const prefixes = options.map(option => option.charAt(0));
+  const prefixesStr = chalk.gray(`[${prefixes.join(',')}]`);
+  process.stdout.write(`${question} (${options.join(',')}) ${prefixesStr} `);
   return new Promise(resolve => {
     function data(d) {
       const input = d.toString().trim().toLowerCase();
@@ -47,15 +59,20 @@ function pickOne(msg, options) {
 }
 
 function run(str) {
-  console.log(chalk.white(`> ${str}`));
-  return new Promise(resolve => {
-    function callback(error, ...rest) {
+  const runString = str.replace(/(\s+)/gm, ' ').trim();
+  logInfo(`> ${runString}`);
+  return new Promise((resolve, reject) => {
+    function callback(error, stdout, stderr) {
       if (error) {
         process.stderr.write(chalk.red(error));
+        return reject(error);
       }
-      return resolve(rest);
+      return resolve({
+        stdout: stdout.trim(),
+        stderr: stderr.trim()
+      });
     }
-    const cmd = childProcess.exec(str, callback);
+    const cmd = childProcess.exec(runString, callback);
     cmd.stderr.on('data', data => {
       process.stdout.write(chalk.gray(data));
     });
@@ -69,6 +86,9 @@ module.exports = {
   confirm,
   exec,
   isRemove,
+  logDebug,
+  logError,
+  logInfo,
   pickOne,
   readFile,
   run,
