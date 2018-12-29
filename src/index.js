@@ -3,6 +3,7 @@
 const mri = require('mri');
 const create = require('./create');
 const deploy = require('./deploy');
+const domains = require('./domains');
 const install = require('./install');
 const login = require('./login');
 const logout = require('./logout');
@@ -24,6 +25,10 @@ async function main() {
     case undefined:
     case 'deploy': {
       await deploy(rest);
+      break;
+    }
+    case 'domains': {
+      await domains(rest);
       break;
     }
     case 'install': {

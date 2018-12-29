@@ -39,7 +39,7 @@ snow
 | :x:                | \<none\>                    | Create deployment |
 | :x:                | `alias`                     | Alias deployment  |
 | :x:                | `deploy`                    | Deploy            |
-| :x:                | `domains`                   | List domains      |
+| :white_check_mark: | `domains`                   | List domains      |
 | :x:                | `domains add [domain]`      | Add domain        |
 | :x:                | `domains rm [domain]`       | Remove domain     |
 | :white_check_mark: | `login`                     | Login             |
