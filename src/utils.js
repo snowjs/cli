@@ -58,7 +58,7 @@ function pickOne(msg, options) {
   });
 }
 
-function run(str) {
+function run(str, opts) {
   const runString = str.replace(/(\s+)/gm, ' ').trim();
   logInfo(`> ${runString}`);
   return new Promise((resolve, reject) => {
@@ -72,7 +72,7 @@ function run(str) {
         stderr: stderr.trim()
       });
     }
-    const cmd = childProcess.exec(runString, callback);
+    const cmd = childProcess.exec(str, opts, callback);
     cmd.stderr.on('data', data => {
       process.stdout.write(chalk.gray(data));
     });
