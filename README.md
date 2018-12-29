@@ -37,8 +37,8 @@ snow
 | :x:                | `domains`                   | List domains      |
 | :x:                | `domains add [domain]`      | Add domain        |
 | :x:                | `domains rm [domain]`       | Remove domain     |
-| :x:                | `login`                     | Login             |
-| :x:                | `logout`                    | Logout            |
+| :white_check_mark: | `login`                     | Login             |
+| :white_check_mark: | `logout`                    | Logout            |
 | :white_check_mark: | `ls`                        | List deployments  |
 | :white_check_mark: | `rm [name]`                 | Remove deployment |
 | :white_check_mark: | `secrets ls`                | List secrets      |

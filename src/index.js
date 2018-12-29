@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
-const chalk = require('chalk');
 const mri = require('mri');
 const create = require('./create');
 const deploy = require('./deploy');
 const install = require('./install');
+const login = require('./login');
+const logout = require('./logout');
 const ls = require('./ls');
 const remove = require('./remove');
 const secrets = require('./secrets');
-const {isRemove} = require('./utils');
+const {isRemove, logError} = require('./utils');
 
 async function main() {
   const {_} = mri(process.argv.slice(2));
@@ -28,6 +29,12 @@ async function main() {
       await install(rest);
       break;
     }
+    case 'login':
+      await login(rest);
+      break;
+    case 'logout':
+      await logout(rest);
+      break;
     case 'ls': {
       await ls(rest);
       break;
@@ -42,7 +49,7 @@ async function main() {
     }
     default: {
       const errMsg = `Error: Invalid command: snow ${command} ${rest.join(' ')}`;
-      console.log(chalk.bold.red(errMsg));
+      logError(errMsg);
     }
   }
 }
