@@ -1,39 +1,57 @@
 const path = require('path');
-const chalk = require('chalk');
-const {confirm, exec, pickOne, run} = require('./utils');
+const {confirm, logError, logInfo, pickOne, run} = require('./utils');
 
 module.exports = async function () {
   const cloudProviders = ['minikube', 'gcp'];
-  const question = 'Which cloud provider are you hosting with (minikube,gcp)';
+  const question = 'Which cloud provider are you hosting with';
   const provider = await pickOne(question, cloudProviders);
   switch (provider) {
     case 'minikube': {
-      const msgs = [
-        'Note: Minikube is for development purposes only.',
-        'Starting Minikube. This may take a minute.'
-      ];
-      const msg = chalk.bold.white(msgs.join('\n'));
-      console.log(msg);
-      await run('minikube start');
+      logInfo('Note: Minikube is for development purposes only.');
+
+      // Start minikube if it isn't running
+      try {
+        await run('minikube status');
+      } catch (error) {
+        logInfo('Starting Minikube. This may take a minute.');
+        await run('minikube start');
+      }
+
       await run('minikube addons enable ingress');
       await run('helm init --wait');
 
+      const {stdout: minikubeIP} = await run('minikube ip');
+
       // Install traefik
-      await run('helm install stable/traefik --name traefik --namespace kube-system --set serviceType=NodePort,dashboard.enabled=true,dashboard.domain=traefik-ui.minikube');
+      await run(`
+        helm install stable/traefik \
+        --name traefik \
+        --namespace kube-system \
+        --set serviceType=NodePort \
+        --set dashboard.enabled=true \
+        --set dashboard.domain=traefik-ui.minikube
+      `);
+      const traefikHost = `${minikubeIP} traefik-ui.minikube`;
+      logInfo(`Add "${traefikHost}" to your hosts file to access traefik's dashboard.`);
+
+      // Install docker registry
+      await run('helm install stable/docker-registry');
 
       if (await confirm('Install an example app on Minikube')) {
         const deployFile = path.resolve(__dirname, '../config/deployment-minikube.yaml');
         await run(`kubectl apply -f ${deployFile}`);
-        const {stdout: minikubeIP} = await exec('minikube ip');
-        console.log(`Add "${minikubeIP.trim()} whoami.minikube" to your hosts file to access example app.`);
+        const whoAmIHost = `${minikubeIP} whoami.minikube`;
+        logInfo(`Add "${whoAmIHost}" to your hosts file to access example app.`);
       }
 
+      const completeMsg = 'Creation complete. It may take a few minutes for services to become available.';
+      logInfo(completeMsg);
       break;
     }
     case 'gcp': {
       // Check if we need to authenticate.
       try {
-        const {stdout} = await exec('gcloud auth list');
+        const {stdout} = await run('gcloud auth list');
         const isAuthenticated = stdout.indexOf('*') > -1;
         if (!isAuthenticated) {
           await run('gcloud auth login');
@@ -42,8 +60,7 @@ module.exports = async function () {
         await run('gcloud auth login');
       }
 
-      const {stdout} = await exec('gcloud config get-value project');
-      const projectId = stdout.trim();
+      const {stdout: projectId} = await run('gcloud config get-value project');
       await run('gcloud services enable container.googleapis.com');
       const createClusterCmd = `
         gcloud beta container \
@@ -72,7 +89,7 @@ module.exports = async function () {
       break;
     }
     default: {
-      console.log(chalk.bold.red('No valid cloud provider selected.'));
+      logError('No valid cloud provider selected.');
     }
   }
 };
