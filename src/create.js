@@ -208,6 +208,20 @@ module.exports = async function () {
        *   --tls-cert $(helm home)/helm.cert.pem
        *   --tls-key $(helm home)/helm.key.pem
        */
+
+      // install traefik
+      await run(`
+        helm install stable/traefik \
+          --tls \
+          --tls-ca-cert $(helm home)/ca.cert.pem \
+          --tls-cert $(helm home)/helm.cert.pem \
+          --tls-key $(helm home)/helm.key.pem \
+          --name traefik \
+          --namespace kube-system \
+          --set kubernetes.ingressClass=traefik \
+          --set rbac.enabled=true
+      `);
+
       break;
     }
     default: {
