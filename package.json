@@ -2,7 +2,7 @@
   "name": "@snowjs/cli",
   "version": "0.0.0",
   "description": "Self-hosted now deployments",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "engines": {
     "node": ">=8.0.0"
   },
@@ -13,7 +13,7 @@
     "lint": "tslint -p . --format stylish"
   },
   "bin": {
-    "snow": "src/index.js"
+    "snow": "dist/index.js"
   },
   "repository": {
     "type": "git",
