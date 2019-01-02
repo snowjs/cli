@@ -1,0 +1,19 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended",
+    "tslint-config-prettier",
+    "tslint-xo/space"
+  ],
+  "jsRules": {
+    "no-console": false,
+    "object-literal-sort-keys": false,
+    "object-curly-spacing": false
+  },
+  "rules": {
+    "no-console": false,
+    "object-literal-sort-keys": false,
+    "object-curly-spacing": false
+  },
+  "rulesDirectory": []
+}

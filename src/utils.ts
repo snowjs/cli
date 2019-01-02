@@ -1,7 +1,7 @@
+import chalk from 'chalk';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
-import { promisify } from 'util';
-import chalk from 'chalk';
+import {promisify} from 'util';
 
 export const exec = promisify(childProcess.exec);
 export const stat = promisify(fs.stat);
@@ -14,7 +14,7 @@ function normalizeString(str: string) {
     .toLowerCase();
 }
 
-export function askForInput(msg: string) {
+export async function askForInput(msg: string) {
   const question = chalk.bold.red(`> ${msg}: `);
   process.stdout.write(question);
 
@@ -29,7 +29,7 @@ export function askForInput(msg: string) {
   });
 }
 
-export function confirm(msg: string) {
+export async function confirm(msg: string) {
   const question = chalk.bold.red(`> ${msg}?`);
   const options = chalk.gray('[y/N] ');
 
@@ -68,7 +68,7 @@ export function logInfo(msg: string) {
   console.log(chalk.bold.white(msg));
 }
 
-export function pickOne(msg: string, options: string[]) {
+export async function pickOne(msg: string, options: string[]) {
   const question = chalk.bold.red(`> ${msg}?`);
   const prefixes = options.map(option => option.charAt(0));
   const prefixesStr = chalk.gray(`[${prefixes.join(',')}]`);
@@ -90,9 +90,9 @@ export function pickOne(msg: string, options: string[]) {
   });
 }
 
-export function run(
+export async function run(
   str: string,
-  opts: {
+  opts?: {
     encoding: 'buffer' | null;
   } & childProcess.ExecOptions
 ) {

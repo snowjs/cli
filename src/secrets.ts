@@ -1,8 +1,8 @@
-const { isRemove, run } = require('./utils');
+import { isRemove, run } from './utils';
 
 type ISecret = [string, string, string];
 
-export default async function(args: ISecret) {
+export default async function secrets(args: ISecret) {
   const [action, key, value] = args;
 
   if (action === 'ls') {
