@@ -8,8 +8,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && npm run build:typescript && npm run build:typescript",
-    "build:typescript": "tsc",
+    "build": "tsc",
+    "watch": "tsc --watch",
     "lint": "tslint -p . --format stylish"
   },
   "bin": {
