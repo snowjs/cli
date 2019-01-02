@@ -1,117 +1,135 @@
-const childProcess = require('child_process');
-const fs = require('fs');
-const util = require('util');
-const chalk = require('chalk');
+import * as childProcess from 'child_process';
+import * as fs from 'fs';
+import { promisify } from 'util';
+import chalk from 'chalk';
 
-const exec = util.promisify(childProcess.exec);
-const stat = util.promisify(fs.stat);
-const readFile = util.promisify(fs.readFile);
+export const exec = promisify(childProcess.exec);
+export const stat = promisify(fs.stat);
+export const readFile = promisify(fs.readFile);
 
-function askForInput(msg) {
+function normalizeString(str: string) {
+  return str
+    .toString()
+    .trim()
+    .toLowerCase();
+}
+
+export function askForInput(msg: string) {
   const question = chalk.bold.red(`> ${msg}: `);
   process.stdout.write(question);
+
   return new Promise(resolve => {
-    function data(d) {
+    function data(d: any) {
       const input = d.toString().trim();
       process.stdin.removeListener('data', data).pause();
       resolve(input);
     }
+
     process.stdin.on('data', data).resume();
   });
 }
 
-function confirm(msg) {
+export function confirm(msg: string) {
   const question = chalk.bold.red(`> ${msg}?`);
   const options = chalk.gray('[y/N] ');
+
   process.stdout.write(`${question} ${options} `);
+
   return new Promise(resolve => {
-    function data(d) {
+    function data(d: any) {
       process.stdin.pause();
-      const isYes =
-        d
-          .toString()
-          .trim()
-          .toLowerCase() === 'y';
+      const isYes = normalizeString(d) === 'y';
+
       if (!isYes) {
         console.log(`${chalk.grey('> ')} Aborted`);
       }
+
       process.stdin.removeListener('data', data).pause();
       resolve(isYes);
     }
+
     process.stdin.on('data', data).resume();
   });
 }
 
-function isRemove(str) {
+export function isRemove(str: string) {
   return str === 'rm' || str === 'remove';
 }
 
-function logDebug(message) {
-  console.log(chalk.gray(message));
+export function logDebug(msg: string) {
+  console.log(chalk.gray(msg));
 }
 
-function logError(message) {
-  console.log(chalk.bold.red(message));
+export function logError(msg: string) {
+  console.log(chalk.bold.red(msg));
 }
 
-function logInfo(message) {
-  console.log(chalk.bold.white(message));
+export function logInfo(msg: string) {
+  console.log(chalk.bold.white(msg));
 }
 
-function pickOne(msg, options) {
+export function pickOne(msg: string, options: string[]) {
   const question = chalk.bold.red(`> ${msg}?`);
   const prefixes = options.map(option => option.charAt(0));
   const prefixesStr = chalk.gray(`[${prefixes.join(',')}]`);
+
   process.stdout.write(`${question} (${options.join(',')}) ${prefixesStr} `);
+
   return new Promise(resolve => {
-    function data(d) {
-      const input = d
-        .toString()
-        .trim()
-        .toLowerCase();
+    function data(d: any) {
+      const input = normalizeString(d);
       const index = prefixes.indexOf(input);
       const option = options[index];
+
       process.stdin.removeListener('data', data).pause();
+
       resolve(option);
     }
+
     process.stdin.on('data', data).resume();
   });
 }
 
-function run(str, opts) {
+export function run(
+  str: string,
+  opts: {
+    encoding: 'buffer' | null;
+  } & childProcess.ExecOptions
+) {
   const runString = str.replace(/(\s+)/gm, ' ').trim();
+
   logInfo(`> ${runString}`);
+
   return new Promise((resolve, reject) => {
-    function callback(error, stdout, stderr) {
+    function callback(
+      error: childProcess.ExecException | null,
+      stdout: string,
+      stderr: string
+    ) {
       if (error) {
-        process.stderr.write(chalk.red(error));
+        process.stderr.write(chalk.red(error.message));
+
+        if (error.stack) {
+          process.stderr.write(chalk.white(error.stack));
+        }
+
         return reject(error);
       }
+
       return resolve({
         stdout: stdout.trim(),
         stderr: stderr.trim()
       });
     }
+
     const cmd = childProcess.exec(str, opts, callback);
-    cmd.stderr.on('data', data => {
+
+    cmd.stderr.on('data', (data: string) => {
       process.stdout.write(chalk.gray(data));
     });
-    cmd.stdout.on('data', data => {
+
+    cmd.stdout.on('data', (data: string) => {
       process.stdout.write(chalk.gray(data));
     });
   });
 }
-
-module.exports = {
-  askForInput,
-  confirm,
-  exec,
-  isRemove,
-  logDebug,
-  logError,
-  logInfo,
-  pickOne,
-  readFile,
-  run,
-  stat
-};

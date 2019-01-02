@@ -1,2 +1,3 @@
 config/build-context/context.tar.gz
 node_modules
+dist
