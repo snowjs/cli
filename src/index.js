@@ -5,6 +5,7 @@ const create = require('./create');
 const deploy = require('./deploy');
 const domains = require('./domains');
 const install = require('./install');
+const ip = require('./ip');
 const login = require('./login');
 const logout = require('./logout');
 const ls = require('./ls');
@@ -33,6 +34,10 @@ async function main() {
     }
     case 'install': {
       await install(rest);
+      break;
+    }
+    case 'ip': {
+      await ip(rest);
       break;
     }
     case 'login':
