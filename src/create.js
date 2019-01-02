@@ -209,30 +209,58 @@ module.exports = async function () {
        *   --tls-key $(helm home)/helm.key.pem
        */
 
-      // install traefik
+      // install nginx ingress
+      await run(`
+        helm install stable/nginx-ingress \
+          --tls \
+          --tls-ca-cert $(helm home)/ca.cert.pem \
+          --tls-cert $(helm home)/helm.cert.pem \
+          --tls-key $(helm home)/helm.key.pem \
+          --namespace kube-system \
+          --name nginx-ingress \
+          --set controller.ingressClass=nginx \
+          --set rbac.create=true
+      `);
+
+      // Install cert-manager
+      await run(`
+        helm install stable/cert-manager \
+          --tls \
+          --tls-ca-cert $(helm home)/ca.cert.pem \
+          --tls-cert $(helm home)/helm.cert.pem \
+          --tls-key $(helm home)/helm.key.pem \
+          --namespace kube-system \
+          --name cert-manager \
+          --set ingressShim.defaultIssuerName=letsencrypt-prod \
+          --set ingressShim.defaultIssuerKind=ClusterIssuer
+      `);
+
       let email = await askForInput('Provide an email address for Let\'s Encrypt');
       while (!await confirm(`Confirm email: "${email}"`)) {
         email = await askForInput('Provide an email address for Let\'s Encrypt');
       }
 
+      // Create cluster issuer
       await run(`
-        helm install stable/traefik \
-          --tls \
-          --tls-ca-cert $(helm home)/ca.cert.pem \
-          --tls-cert $(helm home)/helm.cert.pem \
-          --tls-key $(helm home)/helm.key.pem \
-          --name traefik \
-          --namespace kube-system \
-          --set kubernetes.ingressClass=traefik \
-          --set rbac.enabled=true \
-          --set ssl.enabled=true \
-          --set ssl.enforced=true \
-          --set ssl.permanentRedirect=true \
-          --set acme.enabled=true \
-          --set acme.challengeType=http-01 \
-          --set acme.email=${email} \
-          --set acme.staging=false  
-      `);
+        cat <<EOF | kubectl create -f -
+          {
+            "apiVersion": "certmanager.k8s.io/v1alpha1",
+            "kind": "ClusterIssuer",
+            "metadata": {
+              "name": "letsencrypt-prod"
+            },
+            "spec": {
+              "acme": {
+                "email": "${email}",
+                "http01": {},
+                "privateKeySecretRef": {
+                  "name": "letsencrypt-prod"
+                },
+                "server": "https://acme-v02.api.letsencrypt.org/directory"
+              }
+            }
+          }
+        \nEOF`);
 
       break;
     }
