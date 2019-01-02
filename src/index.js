@@ -12,10 +12,10 @@ const ls = require('./ls');
 const remove = require('./remove');
 const scale = require('./scale');
 const secrets = require('./secrets');
-const {isRemove, logError} = require('./utils');
+const { isRemove, logError } = require('./utils');
 
 async function main() {
-  const {_} = mri(process.argv.slice(2));
+  const { _ } = mri(process.argv.slice(2));
   const [command, ...rest] = _;
 
   switch (command) {
@@ -63,7 +63,9 @@ async function main() {
       break;
     }
     default: {
-      const errMsg = `Error: Invalid command: snow ${command} ${rest.join(' ')}`;
+      const errMsg = `Error: Invalid command: snow ${command} ${rest.join(
+        ' '
+      )}`;
       logError(errMsg);
     }
   }

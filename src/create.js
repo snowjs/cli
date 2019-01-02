@@ -1,7 +1,14 @@
 const path = require('path');
-const {askForInput, confirm, logError, logInfo, pickOne, run} = require('./utils');
+const {
+  askForInput,
+  confirm,
+  logError,
+  logInfo,
+  pickOne,
+  run
+} = require('./utils');
 
-module.exports = async function () {
+module.exports = async function() {
   const cloudProviders = ['minikube', 'gcp'];
   const question = 'Which cloud provider are you hosting with';
   const provider = await pickOne(question, cloudProviders);
@@ -20,7 +27,7 @@ module.exports = async function () {
       await run('minikube addons enable ingress');
       await run('helm init --wait');
 
-      const {stdout: minikubeIP} = await run('minikube ip');
+      const { stdout: minikubeIP } = await run('minikube ip');
 
       // Install traefik
       await run(`
@@ -32,26 +39,34 @@ module.exports = async function () {
         --set dashboard.domain=traefik-ui.minikube
       `);
       const traefikHost = `${minikubeIP} traefik-ui.minikube`;
-      logInfo(`Add "${traefikHost}" to your hosts file to access traefik's dashboard.`);
+      logInfo(
+        `Add "${traefikHost}" to your hosts file to access traefik's dashboard.`
+      );
 
       // Install docker registry
       await run('helm install stable/docker-registry');
 
       if (await confirm('Install an example app on Minikube')) {
-        const deployFile = path.resolve(__dirname, '../config/deployment-minikube.yaml');
+        const deployFile = path.resolve(
+          __dirname,
+          '../config/deployment-minikube.yaml'
+        );
         await run(`kubectl apply -f ${deployFile}`);
         const whoAmIHost = `${minikubeIP} whoami.minikube`;
-        logInfo(`Add "${whoAmIHost}" to your hosts file to access example app.`);
+        logInfo(
+          `Add "${whoAmIHost}" to your hosts file to access example app.`
+        );
       }
 
-      const completeMsg = 'Creation complete. It may take a few minutes for services to become available.';
+      const completeMsg =
+        'Creation complete. It may take a few minutes for services to become available.';
       logInfo(completeMsg);
       break;
     }
     case 'gcp': {
       // Check if we need to authenticate.
       try {
-        const {stdout} = await run('gcloud auth list');
+        const { stdout } = await run('gcloud auth list');
         const isAuthenticated = stdout.indexOf('*') > -1;
         if (!isAuthenticated) {
           await run('gcloud auth login');
@@ -60,12 +75,16 @@ module.exports = async function () {
         await run('gcloud auth login');
       }
 
-      const {stdout: projectId} = await run('gcloud config get-value project');
+      const { stdout: projectId } = await run(
+        'gcloud config get-value project'
+      );
       await run('gcloud services enable container.googleapis.com');
 
       // Check if we have an existing cluster
       let clusterExists = false;
-      const {stdout: clusterData} = await run('gcloud container clusters list');
+      const { stdout: clusterData } = await run(
+        'gcloud container clusters list'
+      );
       if (clusterData.indexOf('snow-cluster') > -1) {
         clusterExists = true;
       }
@@ -114,7 +133,8 @@ module.exports = async function () {
         basicConstraints=critical,CA:TRUE\\n
         subjectKeyIdentifier=hash\\n
         authorityKeyIdentifier=keyid:always,issuer:always`;
-      await run(`
+      await run(
+        `
         openssl req \\
           -config <(printf '${config}') \\
           -key $(helm home)/ca.key.pem \\
@@ -124,22 +144,27 @@ module.exports = async function () {
           -sha256 \\
           -out $(helm home)/ca.cert.pem \\
           -extensions v3_ca \\
-          -subj "/C=US"`, {shell: '/bin/bash'});
+          -subj "/C=US"`,
+        { shell: '/bin/bash' }
+      );
 
       // Create credentials for tiller (server)
       await run(`openssl genrsa -out $(helm home)/tiller.key.pem ${BYTES}`);
-      await run(`
+      await run(
+        `
         openssl req \
           -new \
           -sha256 \
           -key $(helm home)/tiller.key.pem \
           -out $(helm home)/tiller.csr.pem \
           -subj "/C=US/O=Snow/CN=tiller-server"`,
-      {shell: '/bin/bash'});
+        { shell: '/bin/bash' }
+      );
       const tillerConfig = `
         [SAN]\\n
         subjectAltName=IP:127.0.0.1`;
-      await run(`
+      await run(
+        `
         openssl x509 -req -days 365 \
           -CA $(helm home)/ca.cert.pem \
           -CAkey $(helm home)/ca.key.pem \
@@ -148,7 +173,8 @@ module.exports = async function () {
           -out $(helm home)/tiller.cert.pem \
           -extfile <(printf '${tillerConfig}') \
           -extensions SAN`,
-      {shell: '/bin/bash'});
+        { shell: '/bin/bash' }
+      );
 
       // Create credentials for helm (client)
       await run(`openssl genrsa -out $(helm home)/helm.key.pem ${BYTES}`);
@@ -235,9 +261,11 @@ module.exports = async function () {
           --set ingressShim.defaultIssuerKind=ClusterIssuer
       `);
 
-      let email = await askForInput('Provide an email address for Let\'s Encrypt');
-      while (!await confirm(`Confirm email: "${email}"`)) {
-        email = await askForInput('Provide an email address for Let\'s Encrypt');
+      let email = await askForInput(
+        "Provide an email address for Let's Encrypt"
+      );
+      while (!(await confirm(`Confirm email: "${email}"`))) {
+        email = await askForInput("Provide an email address for Let's Encrypt");
       }
 
       // Create cluster issuer

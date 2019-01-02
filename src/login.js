@@ -1,6 +1,6 @@
-const {logError, pickOne, run} = require('./utils');
+const { logError, pickOne, run } = require('./utils');
 
-module.exports = async function () {
+module.exports = async function() {
   const cloudProviders = ['minikube', 'gcp'];
   const question = 'Which cloud provider do you want to login to?';
   const provider = await pickOne(question, cloudProviders);
@@ -11,9 +11,13 @@ module.exports = async function () {
     }
     case 'gcp': {
       await run('gcloud auth login');
-      const {stdout: clusterData} = await run('gcloud container clusters list --format="json"');
-      const {location, name} = JSON.parse(clusterData)[0];
-      await run(`gcloud container clusters get-credentials ${name} --zone "${location}"`);
+      const { stdout: clusterData } = await run(
+        'gcloud container clusters list --format="json"'
+      );
+      const { location, name } = JSON.parse(clusterData)[0];
+      await run(
+        `gcloud container clusters get-credentials ${name} --zone "${location}"`
+      );
       break;
     }
     default: {

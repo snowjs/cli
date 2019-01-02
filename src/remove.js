@@ -1,6 +1,6 @@
-const {run} = require('./utils');
+const { run } = require('./utils');
 
-module.exports = async function (args) {
+module.exports = async function(args) {
   const [deployment] = args;
   await run(`kubectl delete deploy ${deployment}`);
 };

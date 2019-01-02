@@ -1,9 +1,8 @@
-
 const path = require('path');
 const chalk = require('chalk');
-const {exec, readFile, stat} = require('./utils');
+const { exec, readFile, stat } = require('./utils');
 
-module.exports = async function () {
+module.exports = async function() {
   // First: Verify we have a Dockerfile.
   const dockerFilePath = path.resolve(process.cwd(), 'Dockerfile');
   try {
@@ -26,7 +25,7 @@ module.exports = async function () {
   }
 
   // Third: Build and tag the image.
-  const {name} = nowConfig;
+  const { name } = nowConfig;
   if (!name) {
     console.log(chalk.red('Specify a "name" in now.json'));
     return;
@@ -42,7 +41,9 @@ module.exports = async function () {
   // Fourth: Start a local Docker registry, if necessary.
   let registryRunning = true;
   try {
-    const {stdout} = await exec('docker ps --format "{{.Names}}" -f "name=registry"');
+    const { stdout } = await exec(
+      'docker ps --format "{{.Names}}" -f "name=registry"'
+    );
     if (!stdout) {
       registryRunning = false;
     }
@@ -52,7 +53,9 @@ module.exports = async function () {
   }
   if (!registryRunning) {
     try {
-      await exec('docker run -d -p 5000:5000 --restart=always --name registry registry:2');
+      await exec(
+        'docker run -d -p 5000:5000 --restart=always --name registry registry:2'
+      );
     } catch (error) {
       console.log(`Could not start local Docker registry.\n${error.message}`);
     }
