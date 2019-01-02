@@ -1,5 +1,5 @@
 const path = require('path');
-const {confirm, logError, logInfo, pickOne, run} = require('./utils');
+const {askForInput, confirm, logError, logInfo, pickOne, run} = require('./utils');
 
 module.exports = async function () {
   const cloudProviders = ['minikube', 'gcp'];
@@ -210,6 +210,11 @@ module.exports = async function () {
        */
 
       // install traefik
+      let email = await askForInput('Provide an email address for Let\'s Encrypt');
+      while (!await confirm(`Confirm email: "${email}"`)) {
+        email = await askForInput('Provide an email address for Let\'s Encrypt');
+      }
+
       await run(`
         helm install stable/traefik \
           --tls \
@@ -219,7 +224,14 @@ module.exports = async function () {
           --name traefik \
           --namespace kube-system \
           --set kubernetes.ingressClass=traefik \
-          --set rbac.enabled=true
+          --set rbac.enabled=true \
+          --set ssl.enabled=true \
+          --set ssl.enforced=true \
+          --set ssl.permanentRedirect=true \
+          --set acme.enabled=true \
+          --set acme.challengeType=http-01 \
+          --set acme.email=${email} \
+          --set acme.staging=false  
       `);
 
       break;

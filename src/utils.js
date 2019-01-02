@@ -7,6 +7,19 @@ const exec = util.promisify(childProcess.exec);
 const stat = util.promisify(fs.stat);
 const readFile = util.promisify(fs.readFile);
 
+function askForInput(msg) {
+  const question = chalk.bold.red(`> ${msg}: `);
+  process.stdout.write(question);
+  return new Promise(resolve => {
+    function data(d) {
+      const input = d.toString().trim();
+      process.stdin.removeListener('data', data).pause();
+      resolve(input);
+    }
+    process.stdin.on('data', data).resume();
+  });
+}
+
 function confirm(msg) {
   const question = chalk.bold.red(`> ${msg}?`);
   const options = chalk.gray('[y/N] ');
@@ -83,6 +96,7 @@ function run(str, opts) {
 }
 
 module.exports = {
+  askForInput,
   confirm,
   exec,
   isRemove,
