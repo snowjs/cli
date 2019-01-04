@@ -27,7 +27,11 @@ function confirm(msg) {
   return new Promise(resolve => {
     function data(d) {
       process.stdin.pause();
-      const isYes = d.toString().trim().toLowerCase() === 'y';
+      const isYes =
+        d
+          .toString()
+          .trim()
+          .toLowerCase() === 'y';
       if (!isYes) {
         console.log(`${chalk.grey('> ')} Aborted`);
       }
@@ -61,7 +65,10 @@ function pickOne(msg, options) {
   process.stdout.write(`${question} (${options.join(',')}) ${prefixesStr} `);
   return new Promise(resolve => {
     function data(d) {
-      const input = d.toString().trim().toLowerCase();
+      const input = d
+        .toString()
+        .trim()
+        .toLowerCase();
       const index = prefixes.indexOf(input);
       const option = options[index];
       process.stdin.removeListener('data', data).pause();
