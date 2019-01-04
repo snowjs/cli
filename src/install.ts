@@ -1,7 +1,14 @@
-const { confirm, run } = require('./utils');
+import {confirm, run} from './utils';
 
-module.exports = async function() {
-  const dependencies = [
+export default async function() {
+  type IDependency = {
+    label: string,
+    detectCmd: string,
+    installCmd: string,
+    detectAdvanced?: Function
+  };
+
+  const dependencies: IDependency[] = [
     {
       label: 'Virtualbox',
       detectCmd: 'which virtualbox',
@@ -36,13 +43,13 @@ module.exports = async function() {
       label: 'Google Cloud SDK (gcloud) Beta Commands',
       detectCmd: 'gcloud components list --filter="gcloud Beta Commands"',
       installCmd: 'gcloud components install beta --quiet',
-      detectAdvanced: output => {
+      detectAdvanced: (output: string) => {
         return output.indexOf('Not Installed | gcloud Beta Commands') > -1;
       }
     }
   ];
 
-  async function tryInstall(label, installCmd) {
+  async function tryInstall(label: string, installCmd: string) {
     if (await confirm(`Install ${label}`)) {
       await run(installCmd);
     }

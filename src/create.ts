@@ -1,14 +1,14 @@
-const path = require('path');
-const {
+import * as path from 'path';
+import {
   askForInput,
   confirm,
   logError,
   logInfo,
   pickOne,
   run
-} = require('./utils');
+} from './utils';
 
-module.exports = async function() {
+export default async function() {
   const cloudProviders = ['minikube', 'gcp'];
   const question = 'Which cloud provider are you hosting with';
   const provider = await pickOne(question, cloudProviders);

@@ -52,7 +52,7 @@ export async function confirm(msg: string) {
   });
 }
 
-export function isRemove(str: string) {
+export function isRemove(str: string | undefined) {
   return str === 'rm' || str === 'remove';
 }
 
@@ -68,7 +68,7 @@ export function logInfo(msg: string) {
   console.log(chalk.bold.white(msg));
 }
 
-export async function pickOne(msg: string, options: string[]) {
+export async function pickOne(msg: string, options: string[]) : Promise<string> {
   const question = chalk.bold.red(`> ${msg}?`);
   const prefixes = options.map(option => option.charAt(0));
   const prefixesStr = chalk.gray(`[${prefixes.join(',')}]`);
@@ -90,10 +90,15 @@ export async function pickOne(msg: string, options: string[]) {
   });
 }
 
+type IRunResolve = {
+  stdout: string,
+  stderr: string
+};
+
 export async function run(
   str: string,
   opts?: childProcess.ExecOptions
-) {
+) : Promise<IRunResolve> {
   const runString = str.replace(/(\s+)/gm, ' ').trim();
 
   logInfo(`> ${runString}`);

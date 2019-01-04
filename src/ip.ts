@@ -1,6 +1,6 @@
-const { run } = require('./utils');
+import { run } from './utils';
 
-module.exports = async function() {
+export default async function() {
   const path = '{.status.loadBalancer.ingress[0].ip}{"\\n"}';
   await run(`
     kubectl get services/nginx-ingress-controller \

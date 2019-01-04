@@ -1,22 +1,21 @@
-const { logError, run } = require('./utils');
+import {logError, run} from './utils';
 
-module.exports = async function(args) {
-  const [name, min, max] = args;
+export default async function(name?: string, min?: string, max?: string) {
   if (!name) {
-    return logError('name (required): snow scale [name]');
+    return logError('name (required): snow scale <name>');
   }
   if (!min) {
-    return logError('min (required): snow scale [name] [min]');
+    return logError('min (required): snow scale <name> <min>');
   }
   if (isNaN(Number(min))) {
     return logError(
-      'min (typecheck: must be numberic): snow scale [name] [min]'
+      'min (typecheck: must be numberic): snow scale <name> <min>'
     );
   }
 
   if (max && isNaN(Number(max))) {
     return logError(
-      'max (typecheck: must be numberic): snow scale [name] [min] [max]'
+      'max (typecheck: must be numberic): snow scale <name> <min> <max>'
     );
   }
 

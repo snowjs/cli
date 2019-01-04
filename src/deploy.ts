@@ -1,8 +1,8 @@
-const path = require('path');
-const chalk = require('chalk');
-const { exec, readFile, stat } = require('./utils');
+import * as path from 'path';
+import chalk from 'chalk';
+import {exec, readFile, stat} from './utils';
 
-module.exports = async function() {
+export default async function() {
   // First: Verify we have a Dockerfile.
   const dockerFilePath = path.resolve(process.cwd(), 'Dockerfile');
   try {

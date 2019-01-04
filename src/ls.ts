@@ -1,7 +1,6 @@
-const { run } = require('./utils');
+import { run } from './utils';
 
-module.exports = async function(args) {
-  const [deployment] = args;
+export default async function(deployment?: string) {
   if (!deployment) {
     return run('kubectl get deployments');
   }

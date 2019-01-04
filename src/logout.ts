@@ -1,6 +1,6 @@
-const { logError, pickOne, run } = require('./utils');
+import { logError, pickOne, run } from './utils';
 
-module.exports = async function() {
+export default async function() {
   const question = 'Which cloud provider do you want to logout of';
   const options = ['minikube', 'gcp'];
   const provider = await pickOne(question, options);
@@ -10,13 +10,13 @@ module.exports = async function() {
       break;
     }
     case 'gcp': {
-      const { stdout: projectId } = await run(
+      const { stdout: projectId } : {stdout: string} = await run(
         'gcloud config get-value core/project'
       );
-      const { stdout: clusterData } = await run(
+      const { stdout: clusterData } : {stdout: string} = await run(
         'gcloud container clusters list --format="json"'
       );
-      const { location, name } = JSON.parse(clusterData)[0];
+      const { location, name } : {location: string, name: string} = JSON.parse(clusterData)[0];
       const key = `gke_${projectId}_${location}_${name}`;
       await run(`kubectl config unset clusters.${key}`);
       await run(`kubectl config unset contexts.${key}`);
