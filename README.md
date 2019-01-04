@@ -90,16 +90,11 @@ Your now.json file **must** minimally specify `name` and `files`. The `alias` pr
 
 Example `now.json`:
 
-```
+```json
 {
   "name": "myapp",
-  "alias": [
-    "api.myapp.com",
-    "myapp.com"
-  ],
-  "files": [
-    "server.js"
-  ]
+  "alias": ["api.myapp.com", "myapp.com"],
+  "files": ["server.js"]
 }
 ```
 
