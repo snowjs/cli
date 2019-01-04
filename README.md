@@ -2,14 +2,15 @@
   <img height="300" src="./logo.svg">
 </div>
 
-> :snowflake: **S**elf-hosted **now** deployments 
+> :snowflake: **S**elf-hosted **now** deployments
 
 Enjoy effortless deployments with a clone of [now][now] on a cloud of your choosing.
 
 ### Features
- - ⚡️ Deploy docker images via `snow` (or `snow deploy`)
- - 🔒 Auto-configured SSL
- - 🔃 Auto-scaling
+
+- ⚡️ Deploy docker images via `snow` (or `snow deploy`)
+- 🔒 Auto-configured SSL
+- 🔃 Auto-scaling
 
 ### This is Magic 🔮
 
@@ -34,28 +35,27 @@ No, it isn't. This CLI abstracts away the complexities of using [Kubernetes], [c
 
 ### Supported commands
 
-| Support            | Command                     | Description       |
-|--------------------|-----------------------------|-------------------|
-| :x:                | \<none\>                    | Create deployment |
-| :x:                | `alias`                     | Alias deployment  |
-| :x:                | `deploy`                    | Deploy            |
-| :white_check_mark: | `domains`                   | List domains      |
-| :x:                | `domains add [domain]`      | Add domain        |
-| :x:                | `domains rm [domain]`       | Remove domain     |
-| :white_check_mark: | `login`                     | Login             |
-| :white_check_mark: | `logout`                    | Logout            |
-| :white_check_mark: | `ls`                        | List deployments  |
-| :white_check_mark: | `rm [name]`                 | Remove deployment |
-| :white_check_mark: | `scale [name] [min]`        | Scale deployment  |
-| :white_check_mark: | `scale [name] [min] [max]`  | Scale deployment  |
-| :white_check_mark: | `secrets ls`                | List secrets      |
-| :white_check_mark: | `secrets add [key] [value]` | Create secret     |
-| :white_check_mark: | `secrets rm [key]`          | Remove secret     |
+| Support            | Command                      | Description       |
+| ------------------ | ---------------------------- | ----------------- |
+| :x:                | \<none\>                     | Create deployment |
+| :x:                | `alias`                      | Alias deployment  |
+| :x:                | `deploy`                     | Deploy            |
+| :white_check_mark: | `domains [ls]`               | List domains      |
+| :x:                | `domains add <domain>`       | Add domain        |
+| :x:                | `domains rm <domain>`        | Remove domain     |
+| :white_check_mark: | `login`                      | Login             |
+| :white_check_mark: | `logout`                     | Logout            |
+| :white_check_mark: | `ls`                         | List deployments  |
+| :white_check_mark: | `rm <name>`                  | Remove deployment |
+| :white_check_mark: | `scale <name> <min> [<max>]` | Scale deployment  |
+| :white_check_mark: | `secrets [ls]`               | List secrets      |
+| :white_check_mark: | `secrets add <key> <value>`  | Create secret     |
+| :white_check_mark: | `secrets rm <key>`           | Remove secret     |
 
 ### New commands
 
 | Command  | Description                     |
-|----------|---------------------------------|
+| -------- | ------------------------------- |
 | `create` | Run once to create cluster      |
 | `ip`     | Get IP Address of Load Balancer |
 
@@ -69,16 +69,16 @@ snow create
 
 Under the hood, `snow`'s simple CLI is served by a Kubernetes cluster. Here's what happens when you run `snow create`:
 
- - You are authenticated to the cloud provider of your choosing.
- - A Kubernetes cluster is created.
- - [tiller][helm] is installed, which is used to install:
-   - [cert-manager] 
-     - Will automatically watch your deployments and request new certificates for hostnames.
-     - Request new certificates when they're closing to expiring and seamlessly update in production.
-   - [ingress-nginx]
-     - Used for mapping hostnames to deployments.
-     - All HTTP traffic is permanently redirected (HTTP 308) to HTTPS.
-     - SSL terminiation occurs prior to requests reaching deployments.
+- You are authenticated to the cloud provider of your choosing.
+- A Kubernetes cluster is created.
+- [tiller][helm] is installed, which is used to install:
+  - [cert-manager]
+    - Will automatically watch your deployments and request new certificates for hostnames.
+    - Request new certificates when they're closing to expiring and seamlessly update in production.
+  - [ingress-nginx]
+    - Used for mapping hostnames to deployments.
+    - All HTTP traffic is permanently redirected (HTTP 308) to HTTPS.
+    - SSL terminiation occurs prior to requests reaching deployments.
 
 ```
 snow deploy
@@ -105,16 +105,17 @@ Example `now.json`:
 
 The deployment process:
 
- - The files listed in `now.json` plus `Dockerfile` (collectively referred to as the "build context") are assembled into a tar archive.
- - [Kaniko] creates a Docker image from the build context, and pushes it to the private Docker registry in your Kubernetes cluster.
- - A Kubernetes `deployment` resource is created for your image.
- - A Kubernetes `service` resource exposes your deployment.
- - A Kubernetes `ingress` resource maps hostnames (listed as `alias` array in now.json) to the service.
- - [cert-manager] continually inspects ingresses, so if a deployment needs SSL certificates, they will be generated upon deployment.
+- The files listed in `now.json` plus `Dockerfile` (collectively referred to as the "build context") are assembled into a tar archive.
+- [Kaniko] creates a Docker image from the build context, and pushes it to the private Docker registry in your Kubernetes cluster.
+- A Kubernetes `deployment` resource is created for your image.
+- A Kubernetes `service` resource exposes your deployment.
+- A Kubernetes `ingress` resource maps hostnames (listed as `alias` array in now.json) to the service.
+- [cert-manager] continually inspects ingresses, so if a deployment needs SSL certificates, they will be generated upon deployment.
 
 For your domain name to be resolvable by Kubernetes, you **must**:
- - create a DNS `A` record, which points to the IP Address of your load balancer (which can be found via `snow ip`).
- - Alias the domain name to a deployment.
+
+- create a DNS `A` record, which points to the IP Address of your load balancer (which can be found via `snow ip`).
+- Alias the domain name to a deployment.
 
 ### Dependencies
 
