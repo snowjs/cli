@@ -92,9 +92,7 @@ export async function pickOne(msg: string, options: string[]) {
 
 export async function run(
   str: string,
-  opts?: {
-    encoding: 'buffer' | null;
-  } & childProcess.ExecOptions
+  opts?: childProcess.ExecOptions
 ) {
   const runString = str.replace(/(\s+)/gm, ' ').trim();
 
@@ -103,8 +101,8 @@ export async function run(
   return new Promise((resolve, reject) => {
     function callback(
       error: childProcess.ExecException | null,
-      stdout: string,
-      stderr: string
+      stdout: string | Buffer,
+      stderr: string | Buffer
     ) {
       if (error) {
         process.stderr.write(chalk.red(error.message));
@@ -117,8 +115,8 @@ export async function run(
       }
 
       return resolve({
-        stdout: stdout.trim(),
-        stderr: stderr.trim()
+        stdout: stdout.toString().trim(),
+        stderr: stderr.toString().trim()
       });
     }
 
