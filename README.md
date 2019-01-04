@@ -84,15 +84,11 @@ Under the hood, `snow`'s simple CLI is served by a Kubernetes cluster. Here's wh
 snow deploy
 ```
 
-Also aliased as `snow`. Your current directory must have both `Dockerfile` and `now.json` files.
-
-Your now.json file **must** minimally specify `name` and `files`. The `alias` property is optional.
-
-Example `now.json`:
+Also aliased as `snow`. Your current directory must have both `Dockerfile` and `now.json` files. Example `now.json`:
 
 ```json
 {
-  "name": "myapp",
+  "name": "myapp", // required
   "alias": ["api.myapp.com", "myapp.com"],
   "files": ["server.js"]
 }
