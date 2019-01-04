@@ -1,6 +1,6 @@
 import {logError, run} from './utils';
 
-export default async function(name?: string, min?: string, max?: string) {
+export default async (name?: string, min?: string, max?: string) => {
   if (!name) {
     return logError('name (required): snow scale <name>');
   }

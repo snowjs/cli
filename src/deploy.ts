@@ -1,8 +1,8 @@
-import * as path from 'path';
 import chalk from 'chalk';
+import * as path from 'path';
 import {exec, readFile, stat} from './utils';
 
-export default async function() {
+export default async () => {
   // First: Verify we have a Dockerfile.
   const dockerFilePath = path.resolve(process.cwd(), 'Dockerfile');
   try {
@@ -51,14 +51,17 @@ export default async function() {
     console.log(`Could not determine if registry started.\n${error.message}`);
     return;
   }
-  if (!registryRunning) {
-    try {
-      await exec(
-        'docker run -d -p 5000:5000 --restart=always --name registry registry:2'
-      );
-    } catch (error) {
-      console.log(`Could not start local Docker registry.\n${error.message}`);
-    }
+
+  if (registryRunning) {
+    return;
+  }
+
+  try {
+    await exec(
+      'docker run -d -p 5000:5000 --restart=always --name registry registry:2'
+    );
+  } catch (error) {
+    console.log(`Could not start local Docker registry.\n${error.message}`);
   }
 
   // Fifth: Push image to local registry.

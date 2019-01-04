@@ -1,6 +1,6 @@
 import { run } from './utils';
 
-export default async function(deployment?: string) {
+export default async (deployment?: string) => {
   if (!deployment) {
     return run('kubectl get deployments');
   }

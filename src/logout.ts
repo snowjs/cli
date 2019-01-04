@@ -1,6 +1,6 @@
 import { logError, pickOne, run } from './utils';
 
-export default async function() {
+export default async () => {
   const question = 'Which cloud provider do you want to logout of';
   const options = ['minikube', 'gcp'];
   const provider = await pickOne(question, options);

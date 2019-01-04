@@ -1,12 +1,12 @@
 import {confirm, run} from './utils';
 
-export default async function() {
-  type IDependency = {
-    label: string,
-    detectCmd: string,
-    installCmd: string,
-    detectAdvanced?: Function
-  };
+export default async () => {
+  interface IDependency {
+    label: string;
+    detectCmd: string;
+    installCmd: string;
+    detectAdvanced?(output: string): boolean;
+  }
 
   const dependencies: IDependency[] = [
     {
@@ -43,7 +43,7 @@ export default async function() {
       label: 'Google Cloud SDK (gcloud) Beta Commands',
       detectCmd: 'gcloud components list --filter="gcloud Beta Commands"',
       installCmd: 'gcloud components install beta --quiet',
-      detectAdvanced: (output: string) => {
+      detectAdvanced: output => {
         return output.indexOf('Not Installed | gcloud Beta Commands') > -1;
       }
     }
@@ -59,10 +59,10 @@ export default async function() {
     try {
       const { stdout } = await run(detectCmd);
       if (detectAdvanced && detectAdvanced(stdout)) {
-        tryInstall(label, installCmd);
+        await tryInstall(label, installCmd);
       }
     } catch (error) {
-      tryInstall(label, installCmd);
+      await tryInstall(label, installCmd);
     }
   }
 };

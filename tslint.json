@@ -7,11 +7,13 @@
   ],
   "jsRules": {
     "no-console": false,
+    "no-unused": false,
     "object-literal-sort-keys": false,
     "object-curly-spacing": false
   },
   "rules": {
     "no-console": false,
+    "no-unused": false,
     "object-literal-sort-keys": false,
     "object-curly-spacing": false
   },

@@ -8,7 +8,7 @@ import {
   run
 } from './utils';
 
-export default async function() {
+export default async () => {
   const cloudProviders = ['minikube', 'gcp'];
   const question = 'Which cloud provider are you hosting with';
   const provider = await pickOne(question, cloudProviders);
@@ -117,8 +117,10 @@ export default async function() {
         await run(createClusterCmd);
       }
 
-      // Install helm with TLS.
-      // https://medium.com/google-cloud/install-secure-helm-in-gke-254d520061f7
+      /*
+       * Install helm with TLS.
+       * https://medium.com/google-cloud/install-secure-helm-in-gke-254d520061f7
+       */
 
       const BYTES = 2048;
 
@@ -235,7 +237,7 @@ export default async function() {
        *   --tls-key $(helm home)/helm.key.pem
        */
 
-      // install nginx ingress
+      // Install nginx ingress
       await run(`
         helm install stable/nginx-ingress \
           --tls \
@@ -262,10 +264,10 @@ export default async function() {
       `);
 
       let email = await askForInput(
-        "Provide an email address for Let's Encrypt"
+        'Provide an email address for Let\'s Encrypt'
       );
       while (!(await confirm(`Confirm email: "${email}"`))) {
-        email = await askForInput("Provide an email address for Let's Encrypt");
+        email = await askForInput('Provide an email address for Let\'s Encrypt');
       }
 
       // Create cluster issuer

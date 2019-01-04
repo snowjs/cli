@@ -90,10 +90,10 @@ export async function pickOne(msg: string, options: string[]) : Promise<string> 
   });
 }
 
-type IRunResolve = {
-  stdout: string,
-  stderr: string
-};
+interface IRunResolve {
+  stdout: string;
+  stderr: string;
+}
 
 export async function run(
   str: string,
