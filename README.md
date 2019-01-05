@@ -41,8 +41,8 @@ No, it isn't. This CLI abstracts away the complexities of using [Kubernetes], [c
 | :x:                | `alias`                      | Alias deployment  |
 | :x:                | `deploy`                     | Deploy            |
 | :white_check_mark: | `domains [ls]`               | List domains      |
-| :x:                | `domains add <domain>`       | Add domain        |
-| :x:                | `domains rm <domain>`        | Remove domain     |
+| :white_check_mark: | `domains add <domain>`       | Add domain        |
+| :white_check_mark: | `domains rm <domain>`        | Remove domain     |
 | :white_check_mark: | `login`                      | Login             |
 | :white_check_mark: | `logout`                     | Logout            |
 | :white_check_mark: | `ls`                         | List deployments  |
@@ -108,6 +108,30 @@ For your domain name to be resolvable by Kubernetes, you **must**:
 - create a DNS `A` record, which points to the IP Address of your load balancer (which can be found via `snow ip`).
 - Alias the domain name to a deployment.
 
+```
+snow domains [ls]
+```
+
+List all configured domain names.
+
+```
+snow domains add <domain>
+```
+
+Verifies DNS records are configure properly for `<domain>`. Creates rule to redirect traffic from `<domain>` to the [default backend]. Requests an SSL certificate, if one is not available, and sets up SSL termination.
+
+```
+snow domains rm <domain>
+```
+
+Removes any traffic redirect rules. Removes SSL termination with the Let's Encrypt SSL certificate for `<domain>` (the [default certificate] will be used instead). The Let's Encrypt SSL certificate will remain persistented. Traffic from `<domain>` will redirect to the [default backend].
+
+```
+snow ip
+```
+
+Prints the IP address of your cluster.
+
 ### Dependencies
 
 The following CLI tools (installable via `snow install`) are necessary to orchestrate the entire end-to-end process, from Kubernetes cluster creation to managing your deployments:
@@ -123,6 +147,8 @@ If running Kubernetes locally on Minikube, you will additionally need these cli 
 - `virtualbox` (for creating docker images)
 
 [cert-manager]: https://github.com/jetstack/cert-manager
+[default backend]: https://kubernetes.github.io/ingress-nginx/user-guide/default-backend/
+[default certificate]: https://kubernetes.github.io/ingress-nginx/user-guide/tls/#default-ssl-certificate
 [docker registry]: https://github.com/helm/charts/tree/master/stable/docker-registry
 [now]: https://github.com/zeit/now-cli
 [ingress]: https://kubernetes.io/docs/concepts/services-networking/ingress/

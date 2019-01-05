@@ -29,7 +29,7 @@ async function main() {
       break;
     }
     case 'domains': {
-      await domains(rest[0]);
+      await domains(...rest);
       break;
     }
     case 'install': {

@@ -292,6 +292,30 @@ export default async () => {
           }
         \nEOF`);
 
+      // Create global ingress controller
+      await run(`
+      cat <<EOF | kubectl create -f -
+        {
+          "apiVersion": "extensions/v1beta1",
+          "kind": "Ingress",
+          "metadata": {
+            "annotations": {
+              "ingress.kubernetes.io/ssl-redirect": "true",
+              "kubernetes.io/ingress.class": "nginx",
+              "kubernetes.io/tls-acme": "true"
+            },
+            "name": "snow-ingress"
+          },
+          "spec": {
+            "rules": [
+              {
+                "host": "snow.cluster"
+              }
+            ]
+          }
+        }
+      \nEOF`);
+
       break;
     }
     default: {
