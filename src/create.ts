@@ -1,17 +1,11 @@
 import * as path from 'path';
-import {
-  askForInput,
-  confirm,
-  logError,
-  logInfo,
-  pickOne,
-  run
-} from './utils';
+import { askForInput, confirm, logError, logInfo, pickOne, run } from './utils';
+import cloudProviders from './providers';
 
 export default async () => {
-  const cloudProviders = ['minikube', 'gcp'];
   const question = 'Which cloud provider are you hosting with';
   const provider = await pickOne(question, cloudProviders);
+
   switch (provider) {
     case 'minikube': {
       logInfo('Note: Minikube is for development purposes only.');
@@ -264,10 +258,10 @@ export default async () => {
       `);
 
       let email = await askForInput(
-        'Provide an email address for Let\'s Encrypt'
+        "Provide an email address for Let's Encrypt"
       );
       while (!(await confirm(`Confirm email: "${email}"`))) {
-        email = await askForInput('Provide an email address for Let\'s Encrypt');
+        email = await askForInput("Provide an email address for Let's Encrypt");
       }
 
       // Create cluster issuer

@@ -1,9 +1,10 @@
 import { logError, pickOne, run } from './utils';
+import cloudProviders from './providers';
 
 export default async () => {
   const question = 'Which cloud provider do you want to logout of';
-  const options = ['minikube', 'gcp'];
-  const provider = await pickOne(question, options);
+  const provider = await pickOne(question, cloudProviders);
+
   switch (provider) {
     case 'minikube': {
       // In the case of minikube, this is a no-op.
