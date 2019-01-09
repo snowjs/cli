@@ -30,15 +30,27 @@ Today, Serverless lambdas are out of scope for `snow`.
 
 ## Operating Cost
 
-Costs will vary depend on which cloud you choose. Here's an example of what you might minimally need to run on Google Cloud in Region `us-west2`.
+Costs will vary depend on which cloud you choose. These are minimal costs-- in a production setting, you might want a minimum of 2 compute instances, for example, to ensure high availability.
 
-| Resource                               | Resource Count | Monthly Cost |
-| -------------------------------------- | -------------- | ------------ |
-| `g1-small` compute instance            | 1              | \$15.74      |
-| Load balancer w/ 100GB Network Ingress | 1              | \$21.44      |
-| 100GB Network Egress - Americas        | 100GB          | \$11.88      |
-| Cloud Storage (for Docker Registry)    | 8GB            | \$0.07       |
-| Total                                  |                | \$49.13      |
+Cost table for Google Cloud Plaform in region `us-east4`.
+
+| Resource                                  | Count | Cost       |
+| ----------------------------------------- | ----- | ---------- |
+| `g1-small` compute instance (1vCPU/1.7GB) | 1     | \$14.77    |
+| Load balancer w/ 100GB Network Ingress    | 1     | \$21.34    |
+| 100GB Network Egress - Americas           | 100GB | \$11.88    |
+| Persistent Disk                           | 8GB   | \$0.35     |
+| Total                                     |       | \$48.34/mo |
+
+Cost table for Digital Ocean in `nyc1`:
+
+| Resource                                    | Count | Cost       |
+| ------------------------------------------- | ----- | ---------- |
+| `s-1vcpu-2gb` standard droplet (1vCPU/2GB)  | 1     | \$10.00    |
+| Load Balancer w/ ∞GB Network Ingress        | 1     | \$10.00    |
+| 100GB Network Egress (first 1000GB/mo free) | 100GB | \$0.00     |
+| Block Storage (\$0.10/GB/mo)                | 8GB   | \$0.80     |
+| Total                                       |       | \$20.80/mo |
 
 [multicluster ingress]: https://github.com/GoogleCloudPlatform/k8s-multicluster-ingress
 [google cloud load balancing]: https://cloud.google.com/load-balancing/docs/choosing-load-balancer
