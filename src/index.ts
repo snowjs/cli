@@ -56,7 +56,7 @@ async function main() {
       break;
     }
     case 'scale': {
-      await scale(...rest);
+      await scale(rest[0], rest[1], rest[2]);
       break;
     }
     case 'secrets': {

@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import * as path from 'path';
-import {exec, readFile, stat} from './utils';
+import { exec, readFile, stat } from './utils';
 
 export default async () => {
   // First: Verify we have a Dockerfile.

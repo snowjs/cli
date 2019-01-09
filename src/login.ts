@@ -1,9 +1,10 @@
 import { logError, pickOne, run } from './utils';
+import cloudProviders from './providers';
 
 export default async () => {
-  const cloudProviders = ['minikube', 'gcp'];
   const question = 'Which cloud provider do you want to login to';
   const provider = await pickOne(question, cloudProviders);
+
   switch (provider) {
     case 'minikube': {
       await run('kubectl config use-context minikube');
