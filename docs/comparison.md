@@ -4,15 +4,17 @@ There are tradeoffs to using `snow` and `now`.
 
 ## Features
 
-| Feature                   | ❄ snow             | ▲ now                 | Details                                          |
-| ------------------------- | ------------------ | --------------------- | ------------------------------------------------ |
-| Autoscaling               | :white_check_mark: | :white_check_mark: \* | [Now plans] Pro & Advanced only.                 |
-| SSL Termination           | :white_check_mark: | :white_check_mark:    | Certificates self-renew; both use Let's Encrypt. |
-| Multi-region deployments  | :x:                | :white_check_mark:    | Snow: Dependent upon [Multicluster SIG].         |
-| Internal deployments      | :white_check_mark: | :x:                   | Deploy internally accessible Dockerfiles.        |
-| HTTP(S)/WS(S) connections | :white_check_mark: | :white_check_mark:    | Insecure connections are upgraded.               |
-| TCP connections           | :white_check_mark: | :x:                   | Useful for deploying things like Redis.          |
-| Serverless lambdas        | :x:                | :white_check_mark: \* | Now v2 only.                                     |
+| Feature                        | ❄ snow             | 𝚫 now                 | Details                                          |
+| ------------------------------ | ------------------ | --------------------- | ------------------------------------------------ |
+| Doesn't require DNS TXT record | :white_check_mark: | :x:                   | Needed by now to validate domain ownership.      |
+| Autoscaling                    | :white_check_mark: | :white_check_mark: \* | [Now plans] Pro & Advanced only.                 |
+| SSL Termination                | :white_check_mark: | :white_check_mark:    | Certificates self-renew; both use Let's Encrypt. |
+| Wildcard Certificates          | :x:                | :white_check_mark: \* | Supported on Now when using Zeit's name servers. |
+| Multi-region deployments       | :x:                | :white_check_mark:    | Snow: Dependent upon [Multicluster SIG].         |
+| Internal deployments           | :white_check_mark: | :x:                   | Deploy internally accessible Dockerfiles.        |
+| HTTP(S)/WS(S) connections      | :white_check_mark: | :white_check_mark:    | Insecure connections are upgraded.               |
+| TCP connections                | :white_check_mark: | :x:                   | Useful for deploying things like Redis.          |
+| Serverless lambdas             | :x:                | :white_check_mark: \* | Now v2 only.                                     |
 
 ### Multi-region deployments
 

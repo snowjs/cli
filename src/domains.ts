@@ -5,17 +5,29 @@ import { exec, logError, logInfo, run } from './utils';
 
 const dnsResolve = promisify(dns.resolve);
 
-const domainHasCorrectDNSRecords = async (domainName: string) => {
+export const domainHasCorrectDNSRecords = async (domainName: string) => {
   return new Promise(async (resolve, reject) => {
-    const dnsIPs = await dnsResolve(domainName, 'A');
-    const {stdout: clusterIP} = await exec(cmd);
+    let dnsIPs;
+    let {stdout: clusterIP} = await exec(cmd);
+    clusterIP = clusterIP.trim();
+    try {
+      dnsIPs = await dnsResolve(domainName, 'A');
+    } catch (e) {
+      if (e.code === 'ENOTFOUND') {
+        logError(`⚠️  Domain name '${domainName}' has no DNS records.`);
+        logError(`⚠️  Create an A record for '${domainName}' and set its value to ${clusterIP}.`);
+      } else {
+        logError('⚠️  Unknown error occurred while verifying DNS records.');
+      }
+      return;
+    }
 
     dnsIPs.forEach(dnsIP => {
       if (clusterIP.trim() === dnsIP) {
         return;
       }
 
-      logError(`⚠️  Domain name '${domainName}' has an A record for IP address ${dnsIP}, but should be set to ${clusterIP.trim()}.`);
+      logError(`⚠️  Domain name '${domainName}' has an A record for IP address ${dnsIP}, but should be set to ${clusterIP}.`);
       logError(`⚠️  Update DNS records for '${domainName}'.`);
       return reject();
     });

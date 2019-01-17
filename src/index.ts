@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import * as mri from 'mri';
+import alias from './alias';
+import certs from './certs';
 import create from './create';
 import deploy from './deploy';
 import domains from './domains';
@@ -19,6 +21,14 @@ async function main() {
   const [command, ...rest] = _;
 
   switch (command) {
+    case 'alias': {
+      await alias(rest[0], rest[1], rest[2]);
+      break;
+    }
+    case 'certs': {
+      await certs(...rest);
+      break;
+    }
     case 'create': {
       await create();
       break;
