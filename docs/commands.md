@@ -102,7 +102,7 @@ List all deployments.
 
 Deplete deployment `name`.
 
-## snow scale <deployment> <min> [<max>]
+## snow scale \<deployment\> \<min\> [\<max\>]
 
 Configure a deployment named `deployment` to scale to a `min` / `max` number of instances. If no `max` is specified, the `min` is used as the `max`.
 
@@ -110,7 +110,7 @@ Configure a deployment named `deployment` to scale to a `min` / `max` number of 
 
 List all secrets. This will only show secrets created by the snow API, which are annotated in Kubernetes with label `snowsecret=true`.
 
-## snow secrets add <key> <value>
+## snow secrets add \<key\> \<value\>
 
 Create a secret named `key`.
 
