@@ -27,7 +27,7 @@ No, it isn't. This CLI abstracts away the complexities of using [Kubernetes], [c
 # Create your kubernetes cluster (GCP)
 > snow create
 
-# Get your cluster load balancer IP address
+# Get your deployment's IP address
 # And create a DNS 'A' record (e.g., myapp.com A 1.2.3.4)
 > snow ip
 
@@ -35,41 +35,36 @@ No, it isn't. This CLI abstracts away the complexities of using [Kubernetes], [c
 > snow
 ```
 
-### New commands
-
-| Command   | Description                                 |
-| --------- | ------------------------------------------- |
-| `create`  | Run once to create cluster                  |
-| `install` | Uses brew to install necessary dependencies |
-| `ip`      | Get IP Address of Load Balancer             |
-
 ### Supported commands
 
 **Detailed** descriptions of supported commands at [docs/commands.md](docs/commands.md).
 
-| Support            | Command                              | Description           |
-| ------------------ | ------------------------------------ | --------------------- |
-| :x:                | \<none\>                             | Deploy                |
-| :white_check_mark: | `alias [ls]`                         | List aliases          |
-| :white_check_mark: | `alias set <deployment> <alias>`     | Create alias          |
-| :white_check_mark: | `alias rm <alias>`                   | Remove alias          |
-| :white_check_mark: | `certs [ls]`                         | List SSL Certificates |
-| :white_check_mark: | `certs issue <cn> [<cn>]`            | Issue certificate     |
-| :white_check_mark: | `certs rm <cn>`                      | Remove a certificate  |
-| :x:                | `deploy`                             | Deploy                |
-| :white_check_mark: | `domains [ls]`                       | List domains          |
-| :white_check_mark: | `domains add <domain>`               | Add domain            |
-| :no_entry:         | `domains buy <domain>`               | Buy domain            |
-| :white_check_mark: | `domains rm <domain>`                | Remove domain         |
-| :white_check_mark: | `login`                              | Login                 |
-| :white_check_mark: | `logout`                             | Logout                |
-| :white_check_mark: | `ls`                                 | List deployments      |
-| :white_check_mark: | `rm <name>`                          | Remove deployment     |
-| :white_check_mark: | `scale <deployment> <min> [<max>]`   | Scale deployment      |
-| :white_check_mark: | `secrets [ls]`                       | List secrets          |
-| :white_check_mark: | `secrets add <key> <value>`          | Create secret         |
-| :white_check_mark: | `secrets rename <old-key> <new-key>` | Rename secret         |
-| :white_check_mark: | `secrets rm <key>`                   | Remove secret         |
+| Support            | Command                              | Description                   |
+| ------------------ | ------------------------------------ | ----------------------------- |
+| :x:                | \<none\>                             | Deploy                        |
+| :white_check_mark: | `alias [ls]`                         | List aliases                  |
+| :white_check_mark: | `alias set <deployment> <alias>`     | Create alias                  |
+| :white_check_mark: | `alias rm <alias>`                   | Remove alias                  |
+| :white_check_mark: | `certs [ls]`                         | List SSL Certificates         |
+| :white_check_mark: | `certs issue <cn> [<cn>]`            | Issue certificate             |
+| :white_check_mark: | `certs rm <cn>`                      | Remove a certificate          |
+| :new:              | `create`                             | Create Kubernetes cluster     |
+| :white_check_mark: | `deploy`                             | Deploy                        |
+| :white_check_mark: | `domains [ls]`                       | List domains                  |
+| :white_check_mark: | `domains add <domain>`               | Add domain                    |
+| :no_entry:         | `domains buy <domain>`               | Buy domain                    |
+| :white_check_mark: | `domains rm <domain>`                | Remove domain                 |
+| :white_check_mark: | `login`                              | Login                         |
+| :white_check_mark: | `logout`                             | Logout                        |
+| :white_check_mark: | `ls`                                 | List deployments              |
+| :new:              | `install`                            | Install CLI tools (via brew)  |
+| :new:              | `ip`                                 | Get IP Address of deployments |
+| :white_check_mark: | `rm <name>`                          | Remove deployment             |
+| :white_check_mark: | `scale <deployment> <min> [<max>]`   | Scale deployment              |
+| :white_check_mark: | `secrets [ls]`                       | List secrets                  |
+| :white_check_mark: | `secrets add <key> <value>`          | Create secret                 |
+| :white_check_mark: | `secrets rename <old-key> <new-key>` | Rename secret                 |
+| :white_check_mark: | `secrets rm <key>`                   | Remove secret                 |
 
 ### Tell me more
 

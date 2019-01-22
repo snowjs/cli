@@ -27,6 +27,7 @@
   "homepage": "https://github.com/snowjs/cli#readme",
   "dependencies": {
     "chalk": "2.4.1",
+    "docker-file-parser": "1.0.4",
     "mri": "1.1.1"
   },
   "devDependencies": {
