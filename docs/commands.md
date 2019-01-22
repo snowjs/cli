@@ -20,15 +20,17 @@ Lists all certificates.
 
 ## snow certs issue \<cn\> [\<cn\>]
 
-Creates a certificate with the first common name (`cn`) listed. The first and all subsequent common names are also listed in the certificate's Subject Alternative Names (SANs) section. This allows you to create a single certificate for multiple domain names.
+Creates a certificate with the first common name (`cn`) listed. The first and all subsequent `cn` are listed in the certificate's Subject Alternative Names (SANs) section.
+
+This allows you to create a single certificate for multiple domain names.
 
 ## snow certs rm \<cn\>
 
-Delete a Kubernetes `certificate` object. Does _not_ delete the Kubernetes `secret` holding the certificate/private key pair.
+Delete a Kubernetes `certificate` object with id `cn`. Does _not_ delete the Kubernetes `secret` holding the certificate/private key pair.
 
 ## snow create
 
-Under the hood, `snow`'s simple CLI is served by a Kubernetes cluster. Here's what happens when you run `snow create`:
+Creates a Kubernetes cluster to host your deployments.
 
 - You are authenticated to the cloud provider of your choosing.
 - A Kubernetes cluster is created.
@@ -76,11 +78,17 @@ List all configured domain names.
 
 ## snow domains add \<domain\>
 
-Verifies DNS records are configure properly for `domain`. Creates rule to redirect traffic from `domain` to the [default backend]. Requests an SSL certificate, if one is not available, and sets up SSL termination.
+Verifies DNS records are configure properly for `domain`. Creates rule to redirect traffic from `domain` to the [default backend]. Requests an SSL certificate from Let's Encrypt, if one is not present in the cluster, and sets up SSL termination.
 
 ## snow domains rm \<domain\>
 
-Removes any traffic redirect rules. Removes SSL termination with the Let's Encrypt SSL certificate for `domain` (the [default certificate] will be used instead). The Let's Encrypt SSL certificate will remain persistented. Traffic from `domain` will redirect to the [default backend].
+Removes any traffic redirect rules from `domain`. Removes SSL termination with the Let's Encrypt SSL certificate for `domain` (the [default certificate] will be used instead).
+
+The Let's Encrypt SSL certificate will remain persistented (which is helpful if the domain is added later, and it avoids an unnecessary request for a new certificate: requests are limited by Let's Encrypt [rate limits]). Traffic from `domain` will redirect to the [default backend].
+
+## snow install
+
+Install dependencies using `brew`.
 
 ## snow ip
 
@@ -131,3 +139,4 @@ Delete a secret with name `key`.
 [kaniko]: https://github.com/GoogleContainerTools/kaniko
 [minikube]: https://kubernetes.io/docs/setup/minikube/
 [tcp proxy load balancer]: https://cloud.google.com/load-balancing/docs/choosing-load-balancer
+[rate limits]: https://letsencrypt.org/docs/rate-limits/
