@@ -41,7 +41,7 @@ No, it isn't. This CLI abstracts away the complexities of using [Kubernetes], [c
 
 | Support            | Command                              | Description                   |
 | ------------------ | ------------------------------------ | ----------------------------- |
-| :x:                | \<none\>                             | Deploy                        |
+| :white_check_mark: | \<none\>                             | Deploy                        |
 | :white_check_mark: | `alias [ls]`                         | List aliases                  |
 | :white_check_mark: | `alias set <deployment> <alias>`     | Create alias                  |
 | :white_check_mark: | `alias rm <alias>`                   | Remove alias                  |
