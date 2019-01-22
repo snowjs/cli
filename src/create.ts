@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { askForInput, confirm, logError, logInfo, pickOne, run } from './utils';
 import cloudProviders from './providers';
+import { askForInput, confirm, logError, logInfo, pickOne, run } from './utils';
 
 export default async () => {
   const question = 'Which cloud provider are you hosting with';
@@ -258,10 +258,10 @@ export default async () => {
       `);
 
       let email = await askForInput(
-        "Provide an email address for Let's Encrypt"
+        'Provide an email address for Let\'s Encrypt'
       );
       while (!(await confirm(`Confirm email: "${email}"`))) {
-        email = await askForInput("Provide an email address for Let's Encrypt");
+        email = await askForInput('Provide an email address for Let\'s Encrypt');
       }
 
       // Create cluster issuer
