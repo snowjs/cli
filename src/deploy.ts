@@ -106,7 +106,7 @@ export default async () => {
     revision = generation + 1;
   } catch (e) {
     // No deployment exists.
-    revision = 0;
+    revision = 1;
   }
 
   // Create a volume for persisting the build context
