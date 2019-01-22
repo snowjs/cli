@@ -52,14 +52,14 @@ export default async (subcommand?: string, aliasOrDeploymentPrefix?: string, hos
 
     // Given a deployment name, verify both a deployment and service exist.
     try {
-      await run(`kubectl get service/${deployment}-service`);
+      await run(`kubectl get service/${deployment}`);
     } catch (e) {
       logError(`No service exists for deployment '${deployment}'`);
       return;
     }
 
     try {
-      await run(`kubectl get deployment/${deployment}-deployment`);
+      await run(`kubectl get deployment/${deployment}`);
     } catch (e) {
       logError(`No deployment exists for '${deployment}'`);
       return;
@@ -75,8 +75,8 @@ export default async (subcommand?: string, aliasOrDeploymentPrefix?: string, hos
         paths: [
           {
             backend: {
-              serviceName: `${deployment}-service`,
-              servicePort: 80
+              serviceName: deployment,
+              servicePort: 8080
             }
           }
         ]
