@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+import * as sourcemapsupport from 'source-map-support';
+sourcemapsupport.install();
+
 import * as mri from 'mri';
 import alias from './alias';
 import certs from './certs';
