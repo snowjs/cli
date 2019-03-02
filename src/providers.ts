@@ -1,4 +1,4 @@
-type Provider = 'minikube' | 'gcp';
-const cloudProviders: Provider[] = ['minikube', 'gcp'];
+type Provider = 'minikube' | 'gcp' | 'digitalocean';
+const cloudProviders: Provider[] = ['minikube', 'gcp', 'digitalocean'];
 
 export default cloudProviders;

@@ -238,7 +238,7 @@ export default async () => {
                 "args": [
                   "--context=dir:///kaniko/build-context",
                   "--destination=${imageName}",
-                  "--insecure"
+                  "--skip-tls-verify"
                 ],
                 "volumeMounts": [
                   {

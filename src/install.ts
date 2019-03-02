@@ -20,7 +20,7 @@ export default async () => {
       installCmd: 'brew cask install docker'
     },
     {
-      label: 'Kubernetes',
+      label: 'Kubernetes (kubectl)',
       detectCmd: 'which kubectl',
       installCmd: 'brew install kubernetes-cli'
     },
@@ -46,7 +46,12 @@ export default async () => {
       detectAdvanced: output => {
         return output.indexOf('Not Installed | gcloud Beta Commands') > -1;
       }
-    }
+    },
+    {
+      label: 'Digital Ocean CLI (doctl)',
+      detectCmd: 'which doctl',
+      installCmd: 'brew install doctl'
+    },
   ];
 
   async function tryInstall(label: string, installCmd: string) {
@@ -57,7 +62,7 @@ export default async () => {
 
   for (const { label, detectCmd, detectAdvanced, installCmd } of dependencies) {
     try {
-      const { stdout } = await run(detectCmd);
+      const { stdout } = await run(detectCmd, {silent: true});
       if (detectAdvanced && detectAdvanced(stdout)) {
         await tryInstall(label, installCmd);
       }

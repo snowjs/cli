@@ -94,6 +94,10 @@ export default async (subcommand?: string, aliasOrDeploymentPrefix?: string, hos
       ingressSpec.rules[ruleIndex] = rule;
     }
 
+    if (!ingressSpec.tls) {
+      ingressSpec.tls = [];
+    }
+
     // See if an existing TLS entry exists.
     const tlsIndex = ingressSpec.tls.findIndex(hasExistingTLSFactory(hostname));
     if (tlsIndex === -1) {
