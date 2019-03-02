@@ -97,11 +97,16 @@ interface IRunResolve {
 
 export async function run(
   str: string,
-  opts?: childProcess.ExecOptions
+  opts?: childProcess.ExecOptions & {
+    silent?: boolean;
+  }
 ) : Promise<IRunResolve> {
   const runString = str.replace(/(\s+)/gm, ' ').trim();
+  const silent = opts ? opts.silent : false;
 
-  logInfo(`> ${runString}`);
+  if (!silent) {
+    logInfo(`> ${runString}`);
+  }
 
   return new Promise((resolve, reject) => {
     function callback(
@@ -110,10 +115,12 @@ export async function run(
       stderr: string | Buffer
     ) {
       if (error) {
-        process.stderr.write(chalk.red(error.message));
+        if (!silent) {
+          process.stderr.write(chalk.red(error.message));
 
-        if (error.stack) {
-          process.stderr.write(chalk.white(error.stack));
+          if (error.stack) {
+            process.stderr.write(chalk.white(error.stack));
+          }
         }
 
         return reject(error);
@@ -126,6 +133,10 @@ export async function run(
     }
 
     const cmd = childProcess.exec(str, opts, callback);
+
+    if (silent) {
+      return;
+    }
 
     cmd.stderr.on('data', (data: string) => {
       process.stdout.write(chalk.gray(data));
