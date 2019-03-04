@@ -429,9 +429,10 @@ export default async () => {
       --tls-key $(helm home)/helm.key.pem \
       --namespace default \
       --name docker-registry \
+      --version 1.7.0 \
       --set secrets.htpasswd='user:$2y$05$8nR6bYM2ZKR0tkmJ9KEVTeWVVk77sucXVwZQp2q49t6sR0Oip346C' \
       --set persistence.enabled=true \
-      --set persistence.existingClaim='docker-registry-pvc'
+      --set persistence.existingClaim='docker-registry-pvc' \
       --set tlsSecretName='docker-reg-cert-secret'
   `);
 
@@ -448,10 +449,8 @@ export default async () => {
       },
       "spec": {
         "secretName": "docker-reg-cert-secret",
-        "commonName": "${dockerIP}",
-        "ipAddresses": [
-          "${dockerIP}"
-        ],
+        "commonName": "docker-registry.default.svc.cluster.local",
+        "ipAddresses": ["${dockerIP}"],
         "isCA": true,
         "issuerRef": {
           "name": "selfsigning-issuer",
@@ -460,6 +459,85 @@ export default async () => {
       }
     }
   \nEOF`);
+
+  /*
+   * Copy certificate to node VMs daily (to stop the docker
+   * daemon from throwing TLS errors when pulling images)
+   *
+   * You can't mount to a folder to a colon in it, so we copy
+   * to a temp folder, rename tls.crt to tls.cert (to make the
+   * docker daemon happy), and then place the files in a folder
+   * expected by the daemon.
+   */
+  await run(`
+    cat <<EOF | kubectl create -f -
+      {
+        "kind": "DaemonSet",
+        "apiVersion": "apps/v1",
+        "metadata": {
+          "name": "configure-docker"
+        },
+        "spec": {
+          "selector": {
+            "matchLabels": {
+              "name": "configure-docker"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "name": "configure-docker"
+              }
+            },
+            "spec": {
+              "volumes": [
+                {
+                  "name": "etc-folder",
+                  "hostPath": {
+                    "path": "/etc"
+                  }
+                },
+                {
+                  "name": "secrets",
+                  "secret": {
+                    "secretName": "docker-reg-cert-secret"
+                  }
+                }
+              ],
+              "containers": [
+                {
+                  "name": "configure-docker-container",
+                  "image": "alpine",
+                  "args": [
+                    "sh",
+                    "-c",
+                    "${[
+                      'mkdir -p /dockertmp;',
+                      'cp /dockercert/* /dockertmp;',
+                      'cp /dockertmp/tls.crt /dockertmp/tls.cert;',
+                      `mkdir -p /node/etc/docker/certs.d/${dockerIP}:5000;`,
+                      `cp /dockertmp/* /node/etc/docker/certs.d/${dockerIP}:5000;`,
+                      'sleep 86400;'
+                    ].join(' ')}"
+                  ],
+                  "volumeMounts": [
+                    {
+                      "name": "etc-folder",
+                      "mountPath": "/node/etc"
+                    },
+                    {
+                      "name": "secrets",
+                      "mountPath": "/dockercert"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    \nEOF
+  `);
 
   // Create secret/regcred to store registry credentials
   await run(`kubectl create secret docker-registry regcred --docker-server=${dockerIP}:5000 --docker-username=user --docker-password=password`);
