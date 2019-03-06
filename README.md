@@ -1,5 +1,6 @@
 <div align="center">
   <img height="300" src="./logo.svg">
+  <img src="./demo.png">
 </div>
 
 > :snowflake: **S**elf-hosted **now** deployments
