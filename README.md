@@ -19,7 +19,7 @@ No, it isn't. This CLI abstracts away the complexities of using [Kubernetes], [c
 
 ### Getting started
 
-```
+```sh
 > npm i -g @snowjs/cli
 
 # Install CLI tools
