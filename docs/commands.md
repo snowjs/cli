@@ -44,7 +44,7 @@ Creates a Kubernetes cluster to host your deployments.
     - The type of service is `LoadBalancer`.
     - Used for mapping hostnames to deployments.
     - All HTTP traffic is permanently redirected (HTTP 308) to HTTPS.
-    - SSL terminiation occurs prior to requests reaching deployments.
+    - SSL termination occurs prior to requests reaching deployments.
 
 ## snow [deploy]
 
@@ -84,7 +84,7 @@ Verifies DNS records are configure properly for `domain`. Creates rule to redire
 
 Removes any traffic redirect rules from `domain`. Removes SSL termination with the Let's Encrypt SSL certificate for `domain` (the [default certificate] will be used instead).
 
-The Let's Encrypt SSL certificate will remain persistented (which is helpful if the domain is added later, and it avoids an unnecessary request for a new certificate: requests are limited by Let's Encrypt [rate limits]). Traffic from `domain` will redirect to the [default backend].
+The Let's Encrypt SSL certificate will remain persisted (which is helpful if the domain is added later, and it avoids an unnecessary request for a new certificate: requests are limited by Let's Encrypt [rate limits]). Traffic from `domain` will redirect to the [default backend].
 
 ## snow install
 
