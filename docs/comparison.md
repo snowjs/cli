@@ -34,7 +34,7 @@ Today, Serverless lambdas are out of scope for `snow`.
 
 Costs will vary depend on which cloud you choose. These are minimal costs-- in a production setting, you might want a minimum of 2 compute instances, for example, to ensure high availability.
 
-Cost table for Google Cloud Plaform in region `us-east4`.
+Cost table for Google Cloud Platform in region `us-east4`.
 
 | Resource                                  | Count | Cost       |
 | ----------------------------------------- | ----- | ---------- |
