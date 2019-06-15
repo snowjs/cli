@@ -259,7 +259,7 @@ export default async () => {
   \nEOF`);
 
   // Wait for Kaniko to complete / push to Docker registry.
-  await run(`kubectl wait jobs/${kanikoJobName} --timeout=120s --for=condition=complete`);
+  await run(`kubectl wait jobs/${kanikoJobName} --timeout=${60 * 5}s --for=condition=complete`);
 
   // Cleanup
   // Delete kaniko pod and PVC.
