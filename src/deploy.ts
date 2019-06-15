@@ -25,13 +25,13 @@ interface IDeployment {
 
 function verifyNowJSON({alias, name}: INowJSON): Promise<void> {
   if (!name) {
-    const msg = 'Specify a "name" (string) property in now.json';
+    const msg = 'Specify a "name" (string) property in snow.json';
     logError(msg);
     return Promise.reject();
   }
 
   if (!alias) {
-    const msg = 'Specify an "alias" (string[]) property in now.json';
+    const msg = 'Specify an "alias" (string[]) property in snow.json';
     logError(msg);
     return Promise.reject();
   }
@@ -80,14 +80,14 @@ export default async () => {
     return;
   }
 
-  // Verify we have a well-formatted now.json file
-  const nowFilePath = path.resolve(process.cwd(), 'now.json');
+  // Verify we have a well-formatted snow.json file
+  const nowFilePath = path.resolve(process.cwd(), 'snow.json');
   let nowConfig;
   try {
     const nowFile = await readFile(nowFilePath);
     nowConfig = JSON.parse(nowFile.toString());
   } catch (error) {
-    const msg = `Error reading now.json.\n${error.message}`;
+    const msg = `Error reading snow.json.\n${error.message}`;
     logError(msg);
     return;
   }
