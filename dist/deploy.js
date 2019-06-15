@@ -388,7 +388,7 @@ exports['default'] = function() {
               'kubectl wait jobs/' +
                 kanikoJobName +
                 ' --timeout=' +
-                60 * 5 +
+                60 * 10 +
                 's --for=condition=complete'
             )
           ];
