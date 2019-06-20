@@ -234,7 +234,7 @@ export default async () => {
             "containers": [
               {
                 "name": "kaniko",
-                "image": "gcr.io/kaniko-project/executor:0.7.0",
+                "image": "gcr.io/kaniko-project/executor:v0.7.0",
                 "args": [
                   "--context=dir:///kaniko/build-context",
                   "--destination=${imageName}",
