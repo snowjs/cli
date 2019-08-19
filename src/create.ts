@@ -2,155 +2,189 @@ import * as path from 'path';
 import cloudProviders from './providers';
 import { askForInput, confirm, logError, logInfo, pickOne, run } from './utils';
 
-export default async () => {
+interface IOptions {
+  'skip-provision'?: boolean;
+}
+
+export default async (opts: IOptions) => {
   const question = 'Which cloud provider are you hosting with';
   const provider = await pickOne(question, cloudProviders);
 
-  switch (provider) {
-    case 'minikube': {
-      logInfo('Note: Minikube is for development purposes only.');
+  if (!opts['skip-provision']) {
+    switch (provider) {
+      case 'minikube': {
+        logInfo('Note: Minikube is for development purposes only.');
 
-      // Start minikube if it isn't running
-      try {
-        await run('minikube status');
-      } catch (error) {
-        logInfo('Starting Minikube. This may take a minute.');
-        await run('minikube start');
-      }
+        // Start minikube if it isn't running
+        try {
+          await run('minikube status');
+        } catch (error) {
+          logInfo('Starting Minikube. This may take a minute.');
+          await run('minikube start');
+        }
 
-      await run('minikube addons enable ingress');
-      await run('helm init --wait');
+        await run('minikube addons enable ingress');
+        await run('helm init --wait');
 
-      const { stdout: minikubeIP } = await run('minikube ip');
+        const { stdout: minikubeIP } = await run('minikube ip');
 
-      // Install traefik
-      await run(`
-        helm install stable/traefik \
-        --name traefik \
-        --namespace kube-system \
-        --set serviceType=NodePort \
-        --set dashboard.enabled=true \
-        --set dashboard.domain=traefik-ui.minikube
-      `);
-      const traefikHost = `${minikubeIP} traefik-ui.minikube`;
-      logInfo(
-        `Add "${traefikHost}" to your hosts file to access traefik's dashboard.`
-      );
-
-      // Install docker registry
-      await run('helm install stable/docker-registry');
-
-      if (await confirm('Install an example app on Minikube')) {
-        const deployFile = path.resolve(
-          __dirname,
-          '../config/deployment-minikube.yaml'
-        );
-        await run(`kubectl apply -f ${deployFile}`);
-        const whoAmIHost = `${minikubeIP} whoami.minikube`;
+        // Install traefik
+        await run(`
+          helm install stable/traefik \
+          --name traefik \
+          --namespace kube-system \
+          --set serviceType=NodePort \
+          --set dashboard.enabled=true \
+          --set dashboard.domain=traefik-ui.minikube
+        `);
+        const traefikHost = `${minikubeIP} traefik-ui.minikube`;
         logInfo(
-          `Add "${whoAmIHost}" to your hosts file to access example app.`
+          `Add "${traefikHost}" to your hosts file to access traefik's dashboard.`
         );
-      }
 
-      const completeMsg =
-        'Creation complete. It may take a few minutes for services to become available.';
-      logInfo(completeMsg);
-      break;
-    }
-    case 'gcp': {
-      // Check if we need to authenticate.
-      try {
-        const { stdout } = await run('gcloud auth list');
-        const isAuthenticated = stdout.indexOf('*') > -1;
-        if (!isAuthenticated) {
+        // Install docker registry
+        await run('helm install stable/docker-registry');
+
+        if (await confirm('Install an example app on Minikube')) {
+          const deployFile = path.resolve(
+            __dirname,
+            '../config/deployment-minikube.yaml'
+          );
+          await run(`kubectl apply -f ${deployFile}`);
+          const whoAmIHost = `${minikubeIP} whoami.minikube`;
+          logInfo(
+            `Add "${whoAmIHost}" to your hosts file to access example app.`
+          );
+        }
+
+        const completeMsg =
+          'Creation complete. It may take a few minutes for services to become available.';
+        logInfo(completeMsg);
+        break;
+      }
+      case 'gcp': {
+        // Check if we need to authenticate.
+        try {
+          const { stdout } = await run('gcloud auth list');
+          const isAuthenticated = stdout.indexOf('*') > -1;
+          if (!isAuthenticated) {
+            await run('gcloud auth login');
+          }
+        } catch (error) {
           await run('gcloud auth login');
         }
-      } catch (error) {
-        await run('gcloud auth login');
+
+        const { stdout: projectId } = await run(
+          'gcloud config get-value project'
+        );
+        await run('gcloud services enable container.googleapis.com');
+
+        // Check if we have an existing cluster
+        let clusterExists = false;
+        const { stdout: clusterData } = await run(
+          'gcloud container clusters list'
+        );
+        if (clusterData.indexOf('snow-cluster') > -1) {
+          clusterExists = true;
+        }
+
+        const createClusterCmd = `
+          gcloud beta container \
+            clusters create "snow-cluster" \
+            --zone "us-west1-b" \
+            --no-enable-basic-auth \
+            --cluster-version "1.10.9-gke.5" \
+            --image-type "COS" \
+            --machine-type "f1-micro" \
+            --disk-type "pd-standard" \
+            --disk-size "10" \
+            --default-max-pods-per-node "110" \
+            --num-nodes "3" \
+            --enable-cloud-logging \
+            --enable-cloud-monitoring \
+            --enable-ip-alias \
+            --network "projects/${projectId}/global/networks/default" \
+            --subnetwork "projects/${projectId}/regions/us-west1/subnetworks/default" \
+            --default-max-pods-per-node "110" \
+            --addons HorizontalPodAutoscaling,HttpLoadBalancing \
+            --enable-autoupgrade \
+            --enable-autorepair \
+            --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/trace.append" \
+        `;
+
+        if (!clusterExists) {
+          await run(createClusterCmd);
+        }
+        break;
       }
+      case 'digitalocean': {
+        // Authenticate.
+        logInfo('Obtain a Digital Ocean access token here: https://cloud.digitalocean.com/account/api/tokens');
+        const token = await askForInput(
+          'Enter your digital ocean access token'
+        );
+        await run(`doctl auth init -t ${token}`);
 
-      const { stdout: projectId } = await run(
-        'gcloud config get-value project'
-      );
-      await run('gcloud services enable container.googleapis.com');
+        // Check if we have an existing cluster.
+        let clusterExists = true;
+        try {
+          await run('doctl k8s cluster get snow-cluster', {silent: true});
+        } catch (e) {
+          clusterExists = false;
+        }
 
-      // Check if we have an existing cluster
-      let clusterExists = false;
-      const { stdout: clusterData } = await run(
-        'gcloud container clusters list'
-      );
-      if (clusterData.indexOf('snow-cluster') > -1) {
-        clusterExists = true;
+        const region = 'nyc1';
+        const name = 'snow-cluster';
+
+        if (!clusterExists) {
+          // Create the cluster.
+          logInfo('Creating cluster. This will take a few minutes...');
+          await run(`
+            doctl k8s clusters create ${name} \
+              --region ${region} \
+              --version 1.13.1-do.2 \
+              --node-pool "name=node-pool-0;size=s-1vcpu-2gb;count=2" \
+              --wait
+          `);
+        } else {
+          logInfo('Cluster exists.');
+        }
+
+        await run(`kubectl config use-context do-${region}-${name}`);
+
+        break;
       }
-
-      const createClusterCmd = `
-        gcloud beta container \
-          clusters create "snow-cluster" \
-          --zone "us-west1-b" \
-          --no-enable-basic-auth \
-          --cluster-version "1.10.9-gke.5" \
-          --image-type "COS" \
-          --machine-type "f1-micro" \
-          --disk-type "pd-standard" \
-          --disk-size "10" \
-          --default-max-pods-per-node "110" \
-          --num-nodes "3" \
-          --enable-cloud-logging \
-          --enable-cloud-monitoring \
-          --enable-ip-alias \
-          --network "projects/${projectId}/global/networks/default" \
-          --subnetwork "projects/${projectId}/regions/us-west1/subnetworks/default" \
-          --default-max-pods-per-node "110" \
-          --addons HorizontalPodAutoscaling,HttpLoadBalancing \
-          --enable-autoupgrade \
-          --enable-autorepair \
-          --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/trace.append" \
-      `;
-
-      if (!clusterExists) {
-        await run(createClusterCmd);
-      }
-      break;
-    }
-    case 'digitalocean': {
-      // Authenticate.
-      logInfo('Obtain a Digital Ocean access token here: https://cloud.digitalocean.com/account/api/tokens');
-      const token = await askForInput(
-        'Enter your digital ocean access token'
-      );
-      await run(`doctl auth init -t ${token}`);
-
-      // Check if we have an existing cluster.
-      let clusterExists = true;
-      try {
-        await run('doctl k8s cluster get snow-cluster', {silent: true});
-      } catch (e) {
-        clusterExists = false;
-      }
-
-      const region = 'nyc1';
-      const name = 'snow-cluster';
-
-      if (!clusterExists) {
-        // Create the cluster.
-        logInfo('Creating cluster. This will take a few minutes...');
+      case 'azure': {
+        const resourceGroup = 'snow';
+        const clusterName = 'snow-cluster';
+        // Create the resource group.
         await run(`
-          doctl k8s clusters create ${name} \
-            --region ${region} \
-            --version 1.13.1-do.2 \
-            --node-pool "name=node-pool-0;size=s-1vcpu-2gb;count=2" \
-            --wait
+          az group create
+            -n ${resourceGroup} \
+            -l westus \
         `);
-      } else {
-        logInfo('Cluster exists.');
+
+        // Create the cluster.
+        await run(`
+          az aks create \
+            -n ${clusterName} \
+            -g ${resourceGroup} \
+            --no-ssh-key \
+            -k 1.14.5 \
+            --node-count 2
+        `);
+
+        // Get credentials.
+        await run(`
+          az aks get-credentials \
+            -g ${resourceGroup} \
+            -n ${clusterName}
+        `);
+        break;
       }
-
-      await run(`kubectl config use-context do-${region}-${name}`);
-
-      break;
-    }
-    default: {
-      logError('No valid cloud provider selected.');
+      default: {
+        logError('No valid cloud provider selected.');
+      }
     }
   }
 

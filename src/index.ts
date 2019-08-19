@@ -20,7 +20,7 @@ import secrets from './secrets';
 import { logError } from './utils';
 
 async function main() {
-  const { _ } = mri(process.argv.slice(2));
+  const { _, ...opts } = mri(process.argv.slice(2));
   const [command, ...rest] = _;
 
   switch (command) {
@@ -33,7 +33,7 @@ async function main() {
       break;
     }
     case 'create': {
-      await create();
+      await create(opts);
       break;
     }
     case undefined:
