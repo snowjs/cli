@@ -102,7 +102,7 @@ export default async () => {
     const {stdout: deploymentStr} = await run(`kubectl get deployments/${name} -o json`);
     // Deployment exists. Update it.
     deployment = JSON.parse(deploymentStr);
-    const {metadata: {generation}} = JSON.parse(deploymentStr);
+    const {metadata: {generation}} : IDeployment = JSON.parse(deploymentStr);
     revision = generation + 1;
   } catch (e) {
     // No deployment exists.
@@ -179,7 +179,7 @@ export default async () => {
   await run(`tar cvfz buildcontext.tar.gz Dockerfile ${files.join(' ')}`);
 
   // Wait for pod to be ready.
-  await run(`kubectl wait pods/${podName} --timeout=60s --for condition=Ready`);
+  await run(`kubectl wait pods/${podName} --timeout=${2 * 60}s --for condition=Ready`);
 
   // Copy build context to container
   await run(`kubectl cp -c ${contName} buildcontext.tar.gz ${podName}:/tmp/buildcontext.tar.gz`);
@@ -234,7 +234,7 @@ export default async () => {
             "containers": [
               {
                 "name": "kaniko",
-                "image": "gcr.io/kaniko-project/executor:latest",
+                "image": "gcr.io/kaniko-project/executor:v0.7.0",
                 "args": [
                   "--context=dir:///kaniko/build-context",
                   "--destination=${imageName}",
@@ -259,7 +259,7 @@ export default async () => {
   \nEOF`);
 
   // Wait for Kaniko to complete / push to Docker registry.
-  await run(`kubectl wait jobs/${kanikoJobName} --timeout=120s --for=condition=complete`);
+  await run(`kubectl wait jobs/${kanikoJobName} --timeout=${15 * 60}s --for=condition=complete`);
 
   // Cleanup
   // Delete kaniko pod and PVC.
